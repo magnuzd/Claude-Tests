@@ -148,6 +148,12 @@ html{ scroll-behavior:smooth; }
   margin: 0;
 }
 
+/* Explicit color on body-text elements prevents CMS/theme rules
+   (e.g. "p { color: #333 }") from beating inherited color. */
+.lp-type :where(p,li,blockquote){
+  color: var(--lp-color-body);
+}
+
 /* ----------------------------------------------------------
    5) HEADING STYLES (semantic tags preserved)
    ---------------------------------------------------------- */
