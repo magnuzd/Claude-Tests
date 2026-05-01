@@ -1,0 +1,731 @@
+/* Universal LP Style */
+
+/* ----------------------------------------------------------
+   Anchor Link Smooth Scrolling
+   ---------------------------------------------------------- */
+html{ scroll-behavior:smooth; }
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+}
+
+/* ----------------------------------------------------------
+   Hide breadcrumb
+   ---------------------------------------------------------- */
+.breadcrumbs{ display:none !important; }
+
+/* ----------------------------------------------------------
+   1) SCOPE WRAPPER + TOKENS
+   Wrap LP content in:
+     <section class="lp-type"> ... </section>
+   ---------------------------------------------------------- */
+.lp-type{
+  /* Fonts */
+  --lp-font-display: "Wix Madefor Display", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --lp-font-text:    "Wix Madefor Text",    system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+
+  /* Colors */
+  --lp-pop-blue:    #2B7BFF;
+  --lp-blue-ground: #2454A8;
+  --lp-deep-blue:   #0E254D;
+  --lp-white:       #FFFFFF;
+  --lp-black:       #000000;
+  --lp-black-2:     #434343;
+  --lp-light-cool:  #F1F0F7;
+  --lp-med-cool:    #BCBDCC;
+
+  /* Type colors (default = dark ink) */
+  --lp-color-ink:   var(--lp-deep-blue);
+  --lp-color-body:  #1B2430;
+  --lp-link:        inherit;
+
+  /* Optional spacing tokens (kept for future use; NOT applied by default) */
+  --lp-space-1: 4px;
+  --lp-space-2: 8px;
+  --lp-space-3: 12px;
+  --lp-space-4: 16px;
+  --lp-space-5: 24px;
+
+  /* ==========================================================
+     2) TYPE TOKENS (375px -> 1440px) — "one bump down"
+     ========================================================== */
+
+  /* ------------------------------
+     HEADINGS (desktop specs: 48/40/36/30/24/18)
+     Mobile "bump down" mins: 40/36/30/24/18/(slight down)
+     ------------------------------ */
+  --lp-h1: clamp(40px, calc(37.183px + 0.751vw), 48px); /* 40 -> 48 */
+  --lp-h2: clamp(36px, calc(34.592px + 0.376vw), 40px); /* 36 -> 40 */
+  --lp-h3: clamp(30px, calc(27.887px + 0.563vw), 36px); /* 30 -> 36 */
+  --lp-h4: clamp(24px, calc(21.887px + 0.563vw), 30px); /* 24 -> 30 */
+  --lp-h5: clamp(18px, calc(15.887px + 0.563vw), 24px); /* 18 -> 24 */
+  --lp-h6: clamp(16px, calc(15.296px + 0.188vw), 18px); /* 16 -> 18 */
+
+  /* Heading line-heights (desktop specs: 50/42/38/38/28/24)
+     Mobile "bump down" mins: 42/38/38/28/24/(slight down) */
+  --lp-h1-lh: clamp(42px, calc(39.183px + 0.751vw), 50px); /* 42 -> 50 */
+  --lp-h2-lh: clamp(38px, calc(36.592px + 0.376vw), 42px); /* 38 -> 42 */
+  --lp-h3-lh: 38px;                                        /* fixed */
+  --lp-h4-lh: clamp(28px, calc(24.479px + 0.939vw), 38px); /* 28 -> 38 */
+  --lp-h5-lh: clamp(24px, calc(22.592px + 0.376vw), 28px); /* 24 -> 28 */
+  --lp-h6-lh: clamp(22px, calc(21.296px + 0.188vw), 24px); /* 22 -> 24 */
+
+  /* Letter-spacing */
+  --lp-heading-ls: 0.01em; /* 1% */
+  --lp-h6-ls:      0.04em; /* 4% (per spec) */
+
+  /* ------------------------------
+     SUBHEADINGS (desktop specs: 38/34/20/18/16/14)
+     Mobile "bump down" mins: 34/20/18/16/14/(slight down)
+     ------------------------------ */
+  --lp-sub1: clamp(34px, calc(32.592px + 0.376vw), 38px); /* 34 -> 38 */
+  --lp-sub2: clamp(20px, calc(15.070px + 1.315vw), 34px); /* 20 -> 34 */
+  --lp-sub3: clamp(18px, calc(17.296px + 0.188vw), 20px); /* 18 -> 20 */
+  --lp-sub4: clamp(16px, calc(15.296px + 0.188vw), 18px); /* 16 -> 18 */
+  --lp-sub5: clamp(14px, calc(13.296px + 0.188vw), 16px); /* 14 -> 16 */
+  --lp-sub6: clamp(12px, calc(11.296px + 0.188vw), 14px); /* 12 -> 14 */
+
+  /* Subheading line-heights (desktop specs: 40/32/24/22/20/18)
+     Mobile "bump down" mins: 32/24/22/20/18/(slight down) */
+  --lp-sub1-lh: clamp(32px, calc(29.183px + 0.751vw), 40px); /* 32 -> 40 */
+  --lp-sub2-lh: clamp(24px, calc(21.183px + 0.751vw), 32px); /* 24 -> 32 */
+  --lp-sub3-lh: clamp(22px, calc(21.296px + 0.188vw), 24px); /* 22 -> 24 */
+  --lp-sub4-lh: clamp(20px, calc(19.296px + 0.188vw), 22px); /* 20 -> 22 */
+  --lp-sub5-lh: clamp(18px, calc(17.296px + 0.188vw), 20px); /* 18 -> 20 */
+  --lp-sub6-lh: clamp(16px, calc(15.296px + 0.188vw), 18px); /* 16 -> 18 */
+
+  --lp-sub-ls: 0.01em; /* 1% */
+
+  /* ------------------------------
+     BODY (px-based)
+     ------------------------------ */
+  --lp-body20: clamp(18px, calc(17.296px + 0.188vw), 20px); /* 18 -> 20 */
+  --lp-body18: clamp(16px, calc(15.296px + 0.188vw), 18px); /* 16 -> 18 */
+  --lp-body16: clamp(14px, calc(13.296px + 0.188vw), 16px); /* 14 -> 16 */
+
+  --lp-body20-lh: calc(var(--lp-body20) * 1.6);
+  --lp-body18-lh: calc(var(--lp-body18) * 1.6);
+  --lp-body16-lh: calc(var(--lp-body16) * 1.65);
+
+  /* ==========================================================
+     3) BUTTON TOKENS (Small -> Large, px-based)
+     ========================================================== */
+  --lp-btn-fs: clamp(12px, calc(10.592px + 0.376vw), 16px); /* 12 -> 16 */
+  --lp-btn-lh: clamp(13px, calc(11.232px + 0.469vw), 18px); /* 13 -> 18 */
+  --lp-btn-ls: 1px;
+
+  --lp-btn-py: clamp(16px, calc(13.888px + 0.563vw), 22px); /* 16 -> 22 */
+  --lp-btn-px: clamp(32px, calc(25.664px + 1.690vw), 50px); /* 32 -> 50 */
+
+  --lp-btn-radius: 4px;
+  --lp-btn-border: 1px;
+  --lp-btn-trans: 160ms ease;
+}
+
+/* ----------------------------------------------------------
+   4) BASE TEXT BEHAVIOR (scoped)
+   ---------------------------------------------------------- */
+.lp-type{
+  color: var(--lp-color-body);
+  font-family: var(--lp-font-text);
+  font-size: var(--lp-body18);
+  line-height: var(--lp-body18-lh);
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+}
+
+/* ----------------------------------------------------------
+   4A) HARD RESET INSIDE LP (NO VERTICAL SPACING ADDED)
+   ---------------------------------------------------------- */
+.lp-type :where(h1,h2,h3,h4,h5,h6,p,ul,ol,blockquote){
+  margin: 0 !important;
+  padding: 0;
+}
+
+.lp-type :where(ul,ol){
+  padding-left: 1.25em;
+}
+.lp-type :where(li){
+  margin: 0;
+}
+
+/* Explicit color on body-text elements prevents CMS/theme rules
+   (e.g. "p { color: #333 }") from beating inherited color. */
+.lp-type :where(p,li,blockquote){
+  color: var(--lp-color-body);
+}
+
+/* ----------------------------------------------------------
+   5) HEADING STYLES (semantic tags preserved)
+   ---------------------------------------------------------- */
+.lp-type :where(h1,h2,h3,h4,h5){
+  font-family: var(--lp-font-display);
+  color: var(--lp-color-ink);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: var(--lp-heading-ls);
+}
+.lp-type h6{
+  font-family: var(--lp-font-display);
+  color: var(--lp-color-ink);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: var(--lp-h6-ls);
+}
+
+.lp-type h1{ font-size: var(--lp-h1); line-height: var(--lp-h1-lh); }
+.lp-type h2{ font-size: var(--lp-h2); line-height: var(--lp-h2-lh); }
+.lp-type h3{ font-size: var(--lp-h3); line-height: var(--lp-h3-lh); }
+.lp-type h4{ font-size: var(--lp-h4); line-height: var(--lp-h4-lh); }
+.lp-type h5{ font-size: var(--lp-h5); line-height: var(--lp-h5-lh); }
+.lp-type h6{ font-size: var(--lp-h6); line-height: var(--lp-h6-lh); }
+
+/* ----------------------------------------------------------
+   6) SUBHEADING UTILITY CLASSES (Title Case)
+   ---------------------------------------------------------- */
+.lp-type .lp-sub{
+  font-family: var(--lp-font-display);
+  color: var(--lp-color-ink);
+  font-weight: 800;
+  text-transform: none;
+  letter-spacing: var(--lp-sub-ls);
+}
+
+.lp-type .lp-sub--1{ font-size: var(--lp-sub1); line-height: var(--lp-sub1-lh); }
+.lp-type .lp-sub--2{ font-size: var(--lp-sub2); line-height: var(--lp-sub2-lh); }
+.lp-type .lp-sub--3{ font-size: var(--lp-sub3); line-height: var(--lp-sub3-lh); }
+.lp-type .lp-sub--4{ font-size: var(--lp-sub4); line-height: var(--lp-sub4-lh); }
+.lp-type .lp-sub--5{ font-size: var(--lp-sub5); line-height: var(--lp-sub5-lh); }
+.lp-type .lp-sub--6{ font-size: var(--lp-sub6); line-height: var(--lp-sub6-lh); }
+
+/* ----------------------------------------------------------
+   7) BODY UTILITY CLASSES
+   ---------------------------------------------------------- */
+.lp-type .lp-body--20{ font-size: var(--lp-body20); line-height: var(--lp-body20-lh); }
+.lp-type .lp-body--18{ font-size: var(--lp-body18); line-height: var(--lp-body18-lh); }
+.lp-type .lp-body--16{ font-size: var(--lp-body16); line-height: var(--lp-body16-lh); }
+
+/* ----------------------------------------------------------
+   8) LINKS
+   ---------------------------------------------------------- */
+.lp-type a{
+  color: var(--lp-link);
+  text-decoration: underline;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.15em;
+}
+
+/* ==========================================================
+   LP THEME COPY VARIANTS
+   ========================================================== */
+
+/* FIX: was ".lp-type, .lp-type.lp-type--light{" — the dangling comma
+   caused the base .lp-type to inherit white ink, making text invisible
+   on light backgrounds. Light theme is now its own isolated rule. */
+.lp-type.lp-type--light{
+  --lp-color-ink:  var(--lp-white);
+  --lp-color-body: rgba(255,255,255,.92);
+  --lp-link:       rgba(255,255,255,.98);
+}
+.lp-type.lp-type--dark{
+  --lp-color-ink:  var(--lp-deep-blue);
+  --lp-color-body: #1B2430;
+  --lp-link:       inherit;
+}
+
+/* ==========================================================
+   BUTTON SYSTEM (scoped to .lp-type)
+   ========================================================== */
+.lp-type .lp-btn{
+  -webkit-appearance: none;
+  appearance: none;
+
+  box-sizing: border-box;
+  border: var(--lp-btn-border) solid transparent;
+
+  background: transparent;
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+
+  padding: var(--lp-btn-py) var(--lp-btn-px);
+
+  font-family: var(--lp-font-text);
+  font-size: var(--lp-btn-fs);
+  font-weight: 600;
+  line-height: var(--lp-btn-lh);
+  letter-spacing: var(--lp-btn-ls);
+  text-transform: uppercase;
+
+  border-radius: var(--lp-btn-radius);
+
+  transition:
+    background-color var(--lp-btn-trans),
+    color var(--lp-btn-trans),
+    border-color var(--lp-btn-trans),
+    box-shadow var(--lp-btn-trans),
+    transform var(--lp-btn-trans);
+}
+
+.lp-type .lp-btn:focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(43,123,255,.35);
+}
+.lp-type .lp-btn:active{ transform: translateY(1px); }
+
+.lp-type .lp-btn[disabled],
+.lp-type .lp-btn.is-disabled{
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+/* PRIMARY (light background) */
+.lp-type .lp-btn--primary{
+  background-color: var(--lp-blue-ground);
+  color: var(--lp-white);
+  border-color: var(--lp-blue-ground);
+}
+.lp-type .lp-btn--primary:hover{
+  background-color: var(--lp-deep-blue);
+  color: var(--lp-white);
+  border-color: var(--lp-deep-blue);
+}
+.lp-type .lp-btn--primary[disabled],
+.lp-type .lp-btn--primary.is-disabled{
+  background-color: var(--lp-light-cool);
+  color: var(--lp-med-cool);
+  border-color: var(--lp-light-cool);
+}
+
+/* SECONDARY (light background) */
+.lp-type .lp-btn--secondary{
+  color: var(--lp-blue-ground);
+  border-color: var(--lp-deep-blue);
+}
+.lp-type .lp-btn--secondary:hover{
+  background-color: var(--lp-blue-ground);
+  color: var(--lp-white);
+  border-color: var(--lp-deep-blue);
+}
+.lp-type .lp-btn--secondary[disabled],
+.lp-type .lp-btn--secondary.is-disabled{
+  background-color: var(--lp-white);
+  color: var(--lp-med-cool);
+  border-color: var(--lp-med-cool);
+}
+
+/* PRIMARY REVERSED (dark background) */
+.lp-type .lp-btn--primaryRev{
+  background-color: var(--lp-white);
+  color: var(--lp-deep-blue);
+  border-color: var(--lp-white);
+}
+.lp-type .lp-btn--primaryRev:hover{
+  background-color: var(--lp-light-cool);
+  color: var(--lp-deep-blue);
+  border-color: var(--lp-light-cool);
+}
+.lp-type .lp-btn--primaryRev[disabled],
+.lp-type .lp-btn--primaryRev.is-disabled{
+  background-color: #858585;
+  color: #0E254D;
+  border-color: #858585;
+}
+
+/* SECONDARY REVERSED (dark background) */
+.lp-type .lp-btn--secondaryRev{
+  background-color: transparent;
+  color: var(--lp-white);
+  border-color: var(--lp-white);
+}
+.lp-type .lp-btn--secondaryRev:hover{
+  background-color: var(--lp-white);
+  color: var(--lp-deep-blue);
+  border-color: var(--lp-white);
+}
+.lp-type .lp-btn--secondaryRev[disabled],
+.lp-type .lp-btn--secondaryRev.is-disabled{
+  background-color: transparent;
+  color: rgba(255,255,255,.45);
+  border-color: rgba(255,255,255,.45);
+}
+
+/* ==========================================================
+   LINK BUTTON (TERTIARY)
+   ========================================================== */
+
+.lp-type .lp-linkBtn{
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  margin: 0;
+
+  display: inline-flex;
+  align-items: baseline;
+  vertical-align: baseline;
+  line-height: 1;
+  position: relative;
+  top: 1px;
+
+  justify-content: center;
+  gap: 0.5em;
+
+  font-family: var(--lp-font-display);
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+
+  color: var(--lp-deep-blue);
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--lp-pop-blue);
+  text-underline-offset: 0.22em;
+
+  cursor: pointer;
+  transition:
+    color var(--lp-btn-trans),
+    text-decoration-color var(--lp-btn-trans),
+    transform var(--lp-btn-trans);
+}
+
+.lp-type .lp-linkBtn:focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(43,123,255,.35);
+  border-radius: 2px;
+}
+
+.lp-type .lp-linkBtn:active{ transform: translateY(1px); }
+
+/* ---------- Sizes (LG / MD / SM) ---------- */
+.lp-type .lp-linkBtn--lg{ font-size: 18px; line-height: 18px; }
+.lp-type .lp-linkBtn--md{ font-size: 16px; line-height: 18px; }
+.lp-type .lp-linkBtn--sm{ font-size: 14px; line-height: 16px; }
+
+/* ---------- Light (default) states ---------- */
+.lp-type .lp-linkBtn:hover{
+  color: var(--lp-blue-ground);
+}
+
+/* ---------- Reversed variant (for dark backgrounds) ---------- */
+.lp-type .lp-linkBtn--rev{
+  color: var(--lp-white);
+  text-decoration-color: var(--lp-pop-blue);
+}
+.lp-type .lp-linkBtn--rev:hover{
+  color: var(--lp-pop-blue);
+}
+
+/* ---------- Disabled ---------- */
+.lp-type .lp-linkBtn[aria-disabled="true"],
+.lp-type .lp-linkBtn.is-disabled{
+  pointer-events: none;
+  cursor: default;
+  color: rgba(14,37,77,.5);
+  text-decoration-color: rgba(14,37,77,.5);
+  transform: none;
+}
+
+.lp-type .lp-linkBtn--rev[aria-disabled="true"],
+.lp-type .lp-linkBtn--rev.is-disabled{
+  color: rgba(255,255,255,.5);
+  text-decoration-color: rgba(255,255,255,.5);
+}
+
+.lp-type .lp-linkBtn[aria-disabled="true"]:hover,
+.lp-type .lp-linkBtn.is-disabled:hover{
+  color: rgba(14,37,77,.5);
+  text-decoration-color: rgba(14,37,77,.5);
+}
+
+.lp-type .lp-linkBtn--rev[aria-disabled="true"]:hover,
+.lp-type .lp-linkBtn--rev.is-disabled:hover{
+  color: rgba(255,255,255,.5);
+  text-decoration-color: rgba(255,255,255,.5);
+}
+
+/* ==========================================================
+   CTA ROW
+   ========================================================== */
+.lp-ctaRow{
+  display:flex;
+  flex-wrap:wrap;
+  gap:16px;
+  align-items:center;
+}
+
+@media (max-width:480px){
+  .lp-ctaRow{
+    flex-direction:column;
+    align-items:stretch;
+  }
+  .lp-ctaRow > a{
+    width:100%;
+  }
+  .lp-ctaRow .lp-linkBtn{
+    width:auto;
+    align-self:flex-start;
+    margin-top:6px;
+  }
+  .lp-ctaRow{ gap: 12px; }
+}
+
+/* ==========================================================
+   RESPONSIVE BUTTON SIZING
+   ========================================================== */
+
+.lp-type .lp-btn.lp-btn--lg{
+  font-size: clamp(14px, 0.9vw + 10px, 16px);
+  letter-spacing: .04em;
+  min-height: clamp(44px, 2.2vw + 36px, 56px);
+  padding: clamp(12px, 1.2vw + 8px, 16px) clamp(18px, 2.0vw + 10px, 28px);
+}
+
+.lp-type .lp-btn.lp-btn--lg svg,
+.lp-type .lp-btn.lp-btn--lg .lp-btn__icon{
+  width: clamp(16px, 0.9vw + 10px, 20px);
+  height: clamp(16px, 0.9vw + 10px, 20px);
+}
+
+.lp-type .lp-linkBtn.lp-linkBtn--md{
+  font-size: clamp(13px, 0.8vw + 9px, 15px);
+  text-underline-offset: clamp(3px, .35vw + 1px, 6px);
+  text-decoration-thickness: clamp(1px, .2vw, 2px);
+}
+
+/* ==========================================================
+   BUTTON: Icon-in-label Variant
+   ========================================================== */
+.lp-type .lp-btn--icon{
+  gap: 5px;
+}
+
+.lp-type .lp-btn--icon .lp-btn__icon{
+  height: 1em;
+  width: auto;
+  max-width: none;
+  display: inline-block;
+  vertical-align: middle;
+  flex: 0 0 auto;
+  transition: opacity 120ms ease;
+}
+
+/* ==========================================================
+   ICON COLOR SWAP ON HOVER
+   ========================================================== */
+.lp-type .lp-btn--secondary.lp-btn--icon:hover .lp-btn__icon{
+  content: url("/media/wysiwyg/phone-icon-white.png");
+}
+
+.lp-type .lp-btn--secondaryRev.lp-btn--icon:hover .lp-btn__icon{
+  content: url("/media/wysiwyg/phone-icon-popblue.png");
+}
+
+/* ----------------------------------------------------------
+   EYEBROW
+   ---------------------------------------------------------- */
+.gm-eyebrow-white-block .gm-eyebrow-white,
+.gm-eyebrow-deepblue-block .gm-eyebrow-deepblue{
+  position: relative;
+  display: inline-block;
+  font-family: "Wix Madefor Display", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  text-transform: uppercase;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0.05em;
+  padding-left: 12px;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.gm-eyebrow-white-block .gm-eyebrow-white{ color: #FFFFFF; }
+.gm-eyebrow-deepblue-block .gm-eyebrow-deepblue{ color: #0E254D; }
+
+.gm-eyebrow-white-block .gm-eyebrow-white::before,
+.gm-eyebrow-deepblue-block .gm-eyebrow-deepblue::before{
+  content: "/";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #2B7BFF;
+}
+
+@media (max-width: 767px){
+  .gm-eyebrow-white-block .gm-eyebrow-white,
+  .gm-eyebrow-deepblue-block .gm-eyebrow-deepblue{
+    font-size: 12px;
+    line-height: 20px;
+    letter-spacing: 0.05em;
+  }
+}
+
+/* ----------------------------------------------------------
+   BUTTON SIZE OVERRIDES (fixed px)
+   ---------------------------------------------------------- */
+.lp-type .lp-btn--sm{
+  font-size: 12px;
+  line-height: 13px;
+  padding: 16px 32px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.lp-type .lp-btn--md{
+  font-size: 14px;
+  line-height: 18px;
+  padding: 20px 45px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+.lp-type .lp-btn--lg{
+  font-size: 16px;
+  line-height: 18px;
+  padding: 22px 50px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.lp-type.lp-type--tight :where(h1,h2,h3,h4,h5,h6,p,ul,ol,blockquote){
+  margin-bottom: var(--lp-space-3) !important;
+}
+
+/* ==========================================================
+   USR: UNIVERSAL SLIDER RAIL (LP INTEGRATED)
+   ========================================================== */
+
+.usr-rail {
+  --usr-dot-inactive: rgba(217, 217, 217, .5);
+  position: relative;
+  width: 100%;
+}
+
+.usr-rail__track {
+  display: flex;
+  gap: 24px;
+  padding: 8px 8px 18px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.usr-rail__track::-webkit-scrollbar { display: none; }
+
+.usr-rail__card {
+  flex: 0 0 auto;
+  width: clamp(260px, 28vw, 360px);
+  background: #fff;
+  border-radius: 12px;
+  border: none !important;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  scroll-snap-align: start;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.usr-rail__card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .08);
+}
+
+.usr-rail__media {
+  aspect-ratio: 4/3;
+  background: var(--lp-light-cool);
+  margin: 0;
+  border: none !important;
+}
+.usr-rail__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: none !important;
+}
+
+.usr-rail__body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  border: none !important;
+}
+
+.usr-rail .usr-rail__factTitle {
+  font-family: var(--lp-font-display) !important;
+  font-weight: 800 !important;
+  color: var(--lp-deep-blue) !important;
+  text-transform: uppercase !important;
+  letter-spacing: var(--lp-heading-ls) !important;
+  font-size: var(--lp-h6) !important;
+  line-height: var(--lp-h6-lh) !important;
+  margin: 0 !important;
+  -webkit-text-stroke: 0px transparent !important;
+}
+
+.usr-rail .usr-rail__factNote {
+  font-family: var(--lp-font-text) !important;
+  font-weight: 400 !important;
+  color: var(--lp-black-2) !important;
+  font-size: var(--lp-body16) !important;
+  line-height: var(--lp-body16-lh) !important;
+  margin: 0 !important;
+}
+
+.usr-rail__nav {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(14, 37, 77, 0.7);
+  color: #fff;
+  font-size: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease;
+  cursor: pointer;
+  border: none !important;
+  z-index: 10;
+}
+
+.usr-rail:hover .usr-rail__nav { opacity: 1; pointer-events: auto; }
+.usr-rail__nav--prev { left: 8px; }
+.usr-rail__nav--next { right: 8px; }
+
+.usr-rail__dots {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 12px 0 2px 22px;
+}
+
+.usr-rail__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--usr-dot-inactive);
+  border: none !important;
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.usr-rail__dot.is-active {
+  background: var(--lp-pop-blue);
+}
+
+@media (hover: none) { .usr-rail__nav { display: none; } }
+@media (max-width: 900px) {
+  .usr-rail__dots { padding-left: 8px; }
+}
