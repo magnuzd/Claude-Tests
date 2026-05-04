@@ -24,7 +24,7 @@ export default function Navbar() {
         </a>
         <a
           href="#contact"
-          className="border border-white px-5 py-1.5 rounded hover:bg-white hover:text-[#2B45E8] transition-colors"
+          className="border border-white px-5 py-1.5 rounded hover:bg-white hover:text-brand transition-colors"
         >
           Contact us
         </a>
@@ -47,7 +47,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="absolute top-full left-0 right-0 bg-[#1a1060] flex flex-col gap-4 px-8 py-6 text-white text-sm font-medium md:hidden">
+        <div className="absolute top-full left-0 right-0 bg-brand-dark flex flex-col gap-4 px-8 py-6 text-white text-sm font-medium md:hidden">
           <a href="#services" onClick={() => setMenuOpen(false)}>Services</a>
           <a href="#why-spark" onClick={() => setMenuOpen(false)}>Why Spark?</a>
           <a href="#contact" onClick={() => setMenuOpen(false)} className="border border-white px-4 py-1.5 rounded w-fit">

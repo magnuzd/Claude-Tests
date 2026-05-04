@@ -137,7 +137,7 @@ function OfficeIllustration() {
 
 export default function WhyChooseUs() {
   return (
-    <section id="why-spark" className="bg-white py-20 px-8 md:px-14">
+    <section id="why-spark" className="bg-white section-pad">
       <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         {/* Illustration */}
         <div className="flex justify-center">
@@ -146,7 +146,7 @@ export default function WhyChooseUs() {
 
         {/* Content */}
         <div>
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8">
+          <h2 className="section-heading mb-8">
             Why choose us?
           </h2>
           <ul className="flex flex-col gap-7">

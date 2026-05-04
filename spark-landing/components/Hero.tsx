@@ -5,7 +5,7 @@ export default function Hero() {
     <section className="relative min-h-[520px] flex flex-col overflow-hidden">
       {/* Background: dark purple/blue gradient mimicking the twilight office photo */}
       <div
-        className="absolute inset-0 bg-gradient-to-br from-[#0f0c29] via-[#1a1060] to-[#4a2060]"
+        className="absolute inset-0 bg-gradient-to-br from-hero-start via-hero-mid to-hero-end"
         aria-hidden="true"
       />
 
@@ -35,7 +35,7 @@ export default function Hero() {
           </p>
           <a
             href="#contact"
-            className="inline-block border border-white text-white text-sm font-semibold tracking-widest uppercase px-7 py-3 hover:bg-white hover:text-[#1a1060] transition-colors"
+            className="btn-outline-white hover:text-brand-dark"
           >
             Contact Us
           </a>

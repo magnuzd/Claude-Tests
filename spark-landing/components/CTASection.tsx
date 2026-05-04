@@ -1,9 +1,9 @@
 export default function CTASection() {
   return (
-    <section id="contact" className="bg-gray-100 py-20 px-8 md:px-14">
+    <section id="contact" className="bg-gray-100 section-pad">
       <div className="max-w-3xl mx-auto">
         {/* Blue card */}
-        <div className="relative bg-[#2B45E8] rounded-2xl px-10 py-16 text-center overflow-hidden">
+        <div className="relative bg-brand rounded-2xl px-10 py-16 text-center overflow-hidden">
           <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
             Ready to Get Started?
           </h2>
@@ -13,7 +13,7 @@ export default function CTASection() {
           </p>
           <a
             href="mailto:sandra@sparkbco.com"
-            className="inline-block border border-white text-white text-sm font-semibold tracking-widest uppercase px-8 py-3 hover:bg-white hover:text-[#2B45E8] transition-colors"
+            className="btn-outline-white hover:text-brand"
           >
             Contact Us
           </a>

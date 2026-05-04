@@ -62,8 +62,8 @@ const services = [
 
 export default function Services() {
   return (
-    <section id="services" className="bg-gray-100 py-20 px-8 md:px-14">
-      <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-12">
+    <section id="services" className="bg-gray-100 section-pad">
+      <h2 className="section-heading mb-12">
         What services do we offer for your business
       </h2>
 

@@ -2,7 +2,7 @@ import SparkLogo from "./SparkLogo";
 
 export default function Footer() {
   return (
-    <footer className="bg-[#1c1c2e] text-white px-8 md:px-14 py-12">
+    <footer className="bg-footer-bg text-white px-8 md:px-14 py-12">
       <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
         {/* Contact info */}
         <div className="flex gap-12">
