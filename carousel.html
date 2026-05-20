@@ -1,0 +1,292 @@
+<!-- COLLECTOR FAVORITES SLIDER -->
+<style>
+  /* ── Tile rail (original styles unchanged) ── */
+  .collector-favorites .slider-items-wrapper {
+    display: flex;
+    overflow-x: auto;
+    gap: 40px;
+    padding: 0;
+    margin: 0;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+  }
+  .collector-favorites .slider-items-wrapper::-webkit-scrollbar { display: none; }
+
+  .collector-favorites .tile {
+    flex: 0 0 auto;
+    width: clamp(220px, 28vw, 360px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    scroll-snap-align: start;
+  }
+  .collector-favorites .tile img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    display: block;
+  }
+  .collector-favorites .tile h6 {
+    margin-top: 12px;
+    text-align: center;
+    color: #0e254d;
+    font-size: clamp(16px, 2vw, 18px);
+    font-weight: 700;
+    text-transform: capitalize;
+    line-height: 1.2;
+  }
+
+  /* ── Track: positioning context for buttons + edge-fade overlays ── */
+  .collector-favorites .slider-track { position: relative; }
+
+  .collector-favorites .slider-track::before,
+  .collector-favorites .slider-track::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  /* Left fade: full-strength to clearly signal more content */
+  .collector-favorites .slider-track::before {
+    left: 0;
+    width: 80px;
+    background: linear-gradient(to right, #fff 20%, transparent);
+  }
+  /* Right fade: subtler — narrower and semi-transparent */
+  .collector-favorites .slider-track::after {
+    right: 0;
+    width: 60px;
+    background: linear-gradient(to left, rgba(255, 255, 255, 0.65) 15%, transparent);
+  }
+  .collector-favorites .slider-track.can-scroll-left::before  { opacity: 1; }
+  .collector-favorites .slider-track.can-scroll-right::after  { opacity: 1; }
+
+  /* ── Nav buttons: square, always visible, #2B7BFF chevrons ── */
+  .collector-favorites .nav-btn {
+    position: absolute;
+    top: 50%;
+    translate: 0 -50%;
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    z-index: 4;
+    background: #fff;
+    border: 2px solid rgba(43, 123, 255, 0.25);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+    color: #2B7BFF;
+    cursor: pointer;
+    opacity: 0.85;
+    transition:
+      opacity    0.18s ease,
+      background 0.18s ease,
+      color      0.18s ease,
+      border-color 0.18s ease,
+      box-shadow 0.18s ease;
+  }
+  .collector-favorites .nav-btn:hover {
+    opacity: 1;
+    background: #2B7BFF;
+    color: #fff;
+    border-color: #2B7BFF;
+    box-shadow: 0 4px 18px rgba(43, 123, 255, 0.35);
+  }
+  .collector-favorites .nav-btn:focus-visible {
+    outline: 3px solid #2B7BFF;
+    outline-offset: 2px;
+    opacity: 1;
+  }
+  .collector-favorites .nav-btn[disabled] {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .collector-favorites .nav-prev { left:  8px; }
+  .collector-favorites .nav-next { right: 8px; }
+  .collector-favorites .nav-btn svg {
+    width: 22px;
+    height: 22px;
+    stroke-width: 2.5;
+    flex-shrink: 0;
+  }
+
+  /* ── Page indicator dots ── */
+  .carousel-dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 18px;
+    min-height: 20px;
+  }
+  .carousel-dot {
+    height: 8px;
+    width: 8px;
+    min-width: 8px;
+    border-radius: 4px;
+    padding: 0;
+    border: none;
+    background: #c0c8d4;
+    cursor: pointer;
+    transition:
+      background 0.2s ease,
+      width      0.25s ease,
+      transform  0.15s ease;
+  }
+  .carousel-dot.active {
+    width: 28px;
+    background: #2B7BFF;
+  }
+  .carousel-dot:hover:not(.active) {
+    background: #7a8598;
+    transform: scale(1.2);
+  }
+  .carousel-dot:focus-visible {
+    outline: 3px solid #2B7BFF;
+    outline-offset: 3px;
+  }
+</style>
+
+<section class="collector-favorites fullbleed-left"
+         aria-roledescription="carousel"
+         aria-label="Collector Favorites">
+  <div class="align-left-to-body">
+
+    <div class="slider-track">
+
+      <!-- Prev/next: always visible; fade out via [disabled] at scroll ends -->
+      <button class="nav-btn nav-prev" type="button" aria-label="Scroll to previous items">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" focusable="false">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+      <button class="nav-btn nav-next" type="button" aria-label="Scroll to next items">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" focusable="false">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </button>
+
+      <div class="slider-items-wrapper" role="list">
+
+        <!-- TILE 1 -->
+        <a href="/us-coins/silver-eagle" class="tile" role="listitem">
+          <img src="/media/wysiwyg/SilverEagles_HP_IsolatedCoin_01.png" alt="American Silver Eagles" loading="lazy" width="415" height="391">
+          <h6>Silver Eagles</h6>
+        </a>
+
+        <!-- TILE 2 -->
+        <a href="/us-coins/vintage-silver/morgan-silver-dollar" class="tile" role="listitem">
+          <img src="/media/wysiwyg/Morgans_HP_IsolatedCoin_02.png" alt="Morgan Silver Dollars" loading="lazy" width="415" height="391">
+          <h6>Morgan Silver Dollars</h6>
+        </a>
+
+        <!-- TILE 3 -->
+        <a href="/us-coins/gold-eagle" class="tile" role="listitem">
+          <img src="/media/wysiwyg/GoldEagles_HP_IsolatedCoin_03.png" alt="Gold Eagles" loading="lazy" width="415" height="391">
+          <h6>Gold Eagles</h6>
+        </a>
+
+        <!-- TILE 4 -->
+        <a href="/bullion/silver-bullion" class="tile" role="listitem">
+          <img src="/media/wysiwyg/SilverBullion_HP_IsolatedCoin_04.png" alt="Silver Bullion" loading="lazy" width="415" height="391">
+          <h6>Silver Bullion</h6>
+        </a>
+
+        <!-- TILE 5 -->
+        <a href="/new-releases" class="tile" role="listitem">
+          <img src="/media/wysiwyg/NewReleases_HP_IsolatedCoin_05.png" alt="New Arrivals" loading="lazy" width="415" height="391">
+          <h6>New Releases</h6>
+        </a>
+
+        <!-- TILE 6 -->
+        <a href="/us-coins/vintage-gold" class="tile" role="listitem">
+          <img src="/media/wysiwyg/VintageGold_HP_IsolatedCoin_06.png" alt="Vintage Gold" loading="lazy" width="415" height="391">
+          <h6>U.S. Vintage Gold</h6>
+        </a>
+
+      </div>
+    </div>
+
+    <!-- Page-indicator dots: injected and managed by JS -->
+    <nav class="carousel-dots" aria-label="Carousel navigation"></nav>
+
+  </div>
+</section>
+
+<script>
+(() => {
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll('.collector-favorites').forEach(sec => {
+    const rail    = sec.querySelector('.slider-items-wrapper');
+    const track   = sec.querySelector('.slider-track');
+    const prev    = sec.querySelector('.nav-prev');
+    const next    = sec.querySelector('.nav-next');
+    const dotsNav = sec.querySelector('.carousel-dots');
+    if (!rail || !prev || !next) return;
+
+    const step       = () => Math.max(rail.clientWidth * 0.9, 160);
+    const atStart    = () => rail.scrollLeft <= 2;
+    const atEnd      = () => Math.ceil(rail.scrollLeft + rail.clientWidth) >= rail.scrollWidth - 2;
+    const pageCount  = () => Math.max(1, Math.ceil(rail.scrollWidth / rail.clientWidth));
+    const activePage = () => Math.round(rail.scrollLeft / rail.clientWidth);
+
+    let dots = [];
+
+    const buildDots = () => {
+      if (!dotsNav) return;
+      const n = pageCount();
+      if (dots.length === n) return;
+      dotsNav.innerHTML = '';
+      dots = Array.from({ length: n }, (_, i) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'carousel-dot';
+        btn.setAttribute('aria-label', `Page ${i + 1} of ${n}`);
+        btn.addEventListener('click', () =>
+          rail.scrollTo({ left: i * rail.clientWidth, behavior: prefersReduced ? 'auto' : 'smooth' })
+        );
+        dotsNav.appendChild(btn);
+        return btn;
+      });
+      dotsNav.style.display = n <= 1 ? 'none' : '';
+    };
+
+    const updateDots = () => {
+      const p = activePage();
+      dots.forEach((d, i) => {
+        d.classList.toggle('active', i === p);
+        d.setAttribute('aria-current', i === p ? 'true' : 'false');
+      });
+    };
+
+    const update = () => {
+      prev.disabled = atStart();
+      next.disabled = atEnd();
+      if (track) {
+        track.classList.toggle('can-scroll-left',  !atStart());
+        track.classList.toggle('can-scroll-right', !atEnd());
+      }
+      buildDots();
+      updateDots();
+    };
+
+    prev.addEventListener('click', () =>
+      rail.scrollBy({ left: -step(), behavior: prefersReduced ? 'auto' : 'smooth' })
+    );
+    next.addEventListener('click', () =>
+      rail.scrollBy({ left:  step(), behavior: prefersReduced ? 'auto' : 'smooth' })
+    );
+    rail.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', () => { dots = []; update(); }, { passive: true });
+
+    requestAnimationFrame(update);
+  });
+})();
+</script>
