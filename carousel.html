@@ -38,7 +38,7 @@
     line-height: 1.2;
   }
 
-  /* ── Track: positioning context for buttons + edge-fade overlays ── */
+  /* ── Track: edge-fade overlays only ── */
   .collector-favorites .slider-track { position: relative; }
 
   .collector-favorites .slider-track::before,
@@ -52,13 +52,11 @@
     opacity: 0;
     transition: opacity 0.25s ease;
   }
-  /* Left fade: full-strength to clearly signal more content */
   .collector-favorites .slider-track::before {
     left: 0;
     width: 80px;
     background: linear-gradient(to right, #fff 20%, transparent);
   }
-  /* Right fade: subtler — narrower and semi-transparent */
   .collector-favorites .slider-track::after {
     right: 0;
     width: 60px;
@@ -67,51 +65,53 @@
   .collector-favorites .slider-track.can-scroll-left::before  { opacity: 1; }
   .collector-favorites .slider-track.can-scroll-right::after  { opacity: 1; }
 
-  /* ── Nav buttons: square, always visible, #2B7BFF chevrons ── */
+  /* ── Bottom controls bar: prev | dots | next ── */
+  .carousel-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  /* ── Nav buttons: small square, inline with dots ── */
   .collector-favorites .nav-btn {
-    position: absolute;
-    top: 50%;
-    translate: 0 -50%;
-    width: 48px;
-    height: 48px;
-    border-radius: 8px;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    border-radius: 6px;
     display: grid;
     place-items: center;
-    z-index: 4;
     background: #fff;
-    border: 2px solid rgba(43, 123, 255, 0.25);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+    border: 1.5px solid rgba(43, 123, 255, 0.3);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
     color: #2B7BFF;
     cursor: pointer;
-    opacity: 0.85;
     transition:
-      opacity    0.18s ease,
-      background 0.18s ease,
-      color      0.18s ease,
-      border-color 0.18s ease,
-      box-shadow 0.18s ease;
+      background    0.18s ease,
+      color         0.18s ease,
+      border-color  0.18s ease,
+      box-shadow    0.18s ease,
+      opacity       0.18s ease;
   }
   .collector-favorites .nav-btn:hover {
-    opacity: 1;
     background: #2B7BFF;
     color: #fff;
     border-color: #2B7BFF;
-    box-shadow: 0 4px 18px rgba(43, 123, 255, 0.35);
+    box-shadow: 0 2px 8px rgba(43, 123, 255, 0.3);
   }
   .collector-favorites .nav-btn:focus-visible {
     outline: 3px solid #2B7BFF;
     outline-offset: 2px;
-    opacity: 1;
   }
   .collector-favorites .nav-btn[disabled] {
-    opacity: 0;
+    opacity: 0.25;
     pointer-events: none;
+    cursor: default;
   }
-  .collector-favorites .nav-prev { left:  8px; }
-  .collector-favorites .nav-next { right: 8px; }
   .collector-favorites .nav-btn svg {
-    width: 22px;
-    height: 22px;
+    width: 14px;
+    height: 14px;
     stroke-width: 2.5;
     flex-shrink: 0;
   }
@@ -119,11 +119,8 @@
   /* ── Page indicator dots ── */
   .carousel-dots {
     display: flex;
-    justify-content: center;
     align-items: center;
-    gap: 8px;
-    margin-top: 18px;
-    min-height: 20px;
+    gap: 6px;
   }
   .carousel-dot {
     height: 8px;
@@ -158,20 +155,8 @@
          aria-label="Collector Favorites">
   <div class="align-left-to-body">
 
+    <!-- Rail with edge-fade overlays -->
     <div class="slider-track">
-
-      <!-- Prev/next: always visible; fade out via [disabled] at scroll ends -->
-      <button class="nav-btn nav-prev" type="button" aria-label="Scroll to previous items">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" focusable="false">
-          <polyline points="15 18 9 12 15 6"/>
-        </svg>
-      </button>
-      <button class="nav-btn nav-next" type="button" aria-label="Scroll to next items">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" focusable="false">
-          <polyline points="9 18 15 12 9 6"/>
-        </svg>
-      </button>
-
       <div class="slider-items-wrapper" role="list">
 
         <!-- TILE 1 -->
@@ -213,8 +198,20 @@
       </div>
     </div>
 
-    <!-- Page-indicator dots: injected and managed by JS -->
-    <nav class="carousel-dots" aria-label="Carousel navigation"></nav>
+    <!-- Merged controls: prev button | dots | next button -->
+    <nav class="carousel-controls" aria-label="Carousel navigation">
+      <button class="nav-btn nav-prev" type="button" aria-label="Scroll to previous items">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" focusable="false">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+      <div class="carousel-dots"></div>
+      <button class="nav-btn nav-next" type="button" aria-label="Scroll to next items">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" focusable="false">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </button>
+    </nav>
 
   </div>
 </section>
@@ -224,11 +221,12 @@
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   document.querySelectorAll('.collector-favorites').forEach(sec => {
-    const rail    = sec.querySelector('.slider-items-wrapper');
-    const track   = sec.querySelector('.slider-track');
-    const prev    = sec.querySelector('.nav-prev');
-    const next    = sec.querySelector('.nav-next');
-    const dotsNav = sec.querySelector('.carousel-dots');
+    const rail     = sec.querySelector('.slider-items-wrapper');
+    const track    = sec.querySelector('.slider-track');
+    const prev     = sec.querySelector('.nav-prev');
+    const next     = sec.querySelector('.nav-next');
+    const dotsEl   = sec.querySelector('.carousel-dots');
+    const controls = sec.querySelector('.carousel-controls');
     if (!rail || !prev || !next) return;
 
     const step       = () => Math.max(rail.clientWidth * 0.9, 160);
@@ -240,10 +238,10 @@
     let dots = [];
 
     const buildDots = () => {
-      if (!dotsNav) return;
+      if (!dotsEl) return;
       const n = pageCount();
       if (dots.length === n) return;
-      dotsNav.innerHTML = '';
+      dotsEl.innerHTML = '';
       dots = Array.from({ length: n }, (_, i) => {
         const btn = document.createElement('button');
         btn.type = 'button';
@@ -252,10 +250,10 @@
         btn.addEventListener('click', () =>
           rail.scrollTo({ left: i * rail.clientWidth, behavior: prefersReduced ? 'auto' : 'smooth' })
         );
-        dotsNav.appendChild(btn);
+        dotsEl.appendChild(btn);
         return btn;
       });
-      dotsNav.style.display = n <= 1 ? 'none' : '';
+      if (controls) controls.style.display = n <= 1 ? 'none' : '';
     };
 
     const updateDots = () => {
