@@ -1,6 +1,26 @@
 <!-- COLLECTOR FAVORITES SLIDER -->
 <style>
-  /* ── Tile rail (original styles unchanged) ── */
+  /* ── Section-level theming tokens ── */
+  .collector-favorites {
+    --fade-width: 80px;       /* edge-fade width, both sides */
+    --fade-color: #fff;       /* match the page background */
+  }
+
+  /* Visually-hidden helper for the screen-reader live region */
+  .collector-favorites .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* ── Tile rail ── */
   .collector-favorites .slider-items-wrapper {
     display: flex;
     overflow-x: auto;
@@ -9,7 +29,7 @@
     margin: 0;
     -ms-overflow-style: none;
     scrollbar-width: none;
-    scroll-snap-type: x proximity;
+    scroll-snap-type: x mandatory;
   }
   .collector-favorites .slider-items-wrapper::-webkit-scrollbar { display: none; }
 
@@ -54,13 +74,13 @@
   }
   .collector-favorites .slider-track::before {
     left: 0;
-    width: 80px;
-    background: linear-gradient(to right, #fff 20%, transparent);
+    width: var(--fade-width);
+    background: linear-gradient(to right, var(--fade-color) 20%, transparent);
   }
   .collector-favorites .slider-track::after {
     right: 0;
-    width: 60px;
-    background: linear-gradient(to left, rgba(255, 255, 255, 0.65) 15%, transparent);
+    width: var(--fade-width);
+    background: linear-gradient(to left, var(--fade-color) 20%, transparent);
   }
   .collector-favorites .slider-track.can-scroll-left::before  { opacity: 1; }
   .collector-favorites .slider-track.can-scroll-right::after  { opacity: 1; }
@@ -104,10 +124,16 @@
     outline: 3px solid #2B7BFF;
     outline-offset: 2px;
   }
-  .collector-favorites .nav-btn[disabled] {
+  .collector-favorites .nav-btn[aria-disabled="true"] {
     opacity: 0.25;
-    pointer-events: none;
     cursor: default;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  }
+  /* Keep disabled buttons focusable but inert on hover */
+  .collector-favorites .nav-btn[aria-disabled="true"]:hover {
+    background: #fff;
+    color: #2B7BFF;
+    border-color: rgba(43, 123, 255, 0.3);
   }
   .collector-favorites .nav-btn svg {
     width: 14px;
@@ -161,7 +187,7 @@
 
         <!-- TILE 1 -->
         <a href="/us-coins/silver-eagle" class="tile" role="listitem">
-          <img src="/media/wysiwyg/SilverEagles_HP_IsolatedCoin_01.png" alt="American Silver Eagles" loading="lazy" width="415" height="391">
+          <img src="/media/wysiwyg/SilverEagles_HP_IsolatedCoin_01.png" alt="Silver Eagles" loading="lazy" width="415" height="391">
           <h6>Silver Eagles</h6>
         </a>
 
@@ -185,13 +211,13 @@
 
         <!-- TILE 5 -->
         <a href="/new-releases" class="tile" role="listitem">
-          <img src="/media/wysiwyg/NewReleases_HP_IsolatedCoin_05.png" alt="New Arrivals" loading="lazy" width="415" height="391">
+          <img src="/media/wysiwyg/NewReleases_HP_IsolatedCoin_05.png" alt="New Releases" loading="lazy" width="415" height="391">
           <h6>New Releases</h6>
         </a>
 
         <!-- TILE 6 -->
         <a href="/us-coins/vintage-gold" class="tile" role="listitem">
-          <img src="/media/wysiwyg/VintageGold_HP_IsolatedCoin_06.png" alt="Vintage Gold" loading="lazy" width="415" height="391">
+          <img src="/media/wysiwyg/VintageGold_HP_IsolatedCoin_06.png" alt="U.S. Vintage Gold" loading="lazy" width="415" height="391">
           <h6>U.S. Vintage Gold</h6>
         </a>
 
@@ -200,18 +226,21 @@
 
     <!-- Merged controls: prev button | dots | next button -->
     <nav class="carousel-controls" aria-label="Carousel navigation">
-      <button class="nav-btn nav-prev" type="button" aria-label="Scroll to previous items">
+      <button class="nav-btn nav-prev" type="button" aria-label="Scroll to previous items" aria-disabled="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" focusable="false">
           <polyline points="15 18 9 12 15 6"/>
         </svg>
       </button>
-      <div class="carousel-dots"></div>
+      <div class="carousel-dots" role="group" aria-label="Choose page"></div>
       <button class="nav-btn nav-next" type="button" aria-label="Scroll to next items">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" focusable="false">
           <polyline points="9 18 15 12 9 6"/>
         </svg>
       </button>
     </nav>
+
+    <!-- Screen-reader announcement of the current page -->
+    <div class="carousel-status visually-hidden" role="status" aria-live="polite"></div>
 
   </div>
 </section>
@@ -227,64 +256,117 @@
     const next     = sec.querySelector('.nav-next');
     const dotsEl   = sec.querySelector('.carousel-dots');
     const controls = sec.querySelector('.carousel-controls');
+    const statusEl = sec.querySelector('.carousel-status');
     if (!rail || !prev || !next) return;
 
-    const step       = () => Math.max(rail.clientWidth * 0.9, 160);
-    const atStart    = () => rail.scrollLeft <= 2;
-    const atEnd      = () => Math.ceil(rail.scrollLeft + rail.clientWidth) >= rail.scrollWidth - 2;
-    const pageCount  = () => Math.max(1, Math.ceil(rail.scrollWidth / rail.clientWidth));
-    const activePage = () => Math.round(rail.scrollLeft / rail.clientWidth);
+    let dots     = [];
+    let lastPage = -1;
 
-    let dots = [];
+    // ── Layout metrics, all read once per pass ──
+    // Pages are aligned to whole tiles so the dots, the prev/next buttons, and the
+    // actual scroll position all share a single unit and never drift apart.
+    const metrics = () => {
+      const tiles   = rail.children;
+      const count   = tiles.length;
+      const cw      = rail.clientWidth;
+      const left    = rail.scrollLeft;
+      const maxLeft = rail.scrollWidth - cw;
 
-    const buildDots = () => {
-      if (!dotsEl) return;
-      const n = pageCount();
-      if (dots.length === n) return;
+      const gap      = parseFloat(getComputedStyle(rail).columnGap) || 0;
+      const tileW    = count ? tiles[0].getBoundingClientRect().width : cw;
+      const unit     = tileW + gap;                                   // one tile's advance
+      const perPage  = Math.max(1, Math.floor((cw + gap) / unit));    // whole tiles per view
+      const pageSpan = perPage * unit;
+      const pages    = Math.max(1, Math.ceil(count / perPage));
+
+      const atStart  = left <= 2;
+      const atEnd    = left >= maxLeft - 2;
+      const page     = atEnd ? pages - 1
+                             : Math.min(pages - 1, Math.max(0, Math.round(left / pageSpan)));
+
+      return { pages, page, pageSpan, maxLeft, atStart, atEnd };
+    };
+
+    const scrollToLeft = (left) =>
+      rail.scrollTo({ left, behavior: prefersReduced ? 'auto' : 'smooth' });
+
+    const buildDots = (pages) => {
+      if (!dotsEl || dots.length === pages) return;
       dotsEl.innerHTML = '';
-      dots = Array.from({ length: n }, (_, i) => {
+      dots = Array.from({ length: pages }, (_, i) => {
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'carousel-dot';
-        btn.setAttribute('aria-label', `Page ${i + 1} of ${n}`);
-        btn.addEventListener('click', () =>
-          rail.scrollTo({ left: i * rail.clientWidth, behavior: prefersReduced ? 'auto' : 'smooth' })
-        );
+        btn.setAttribute('aria-label', `Page ${i + 1} of ${pages}`);
+        btn.addEventListener('click', () => {
+          const { pageSpan, maxLeft } = metrics();
+          scrollToLeft(Math.min(i * pageSpan, maxLeft));
+        });
         dotsEl.appendChild(btn);
         return btn;
       });
-      if (controls) controls.style.display = n <= 1 ? 'none' : '';
+      if (controls) controls.style.display = pages <= 1 ? 'none' : '';
     };
 
-    const updateDots = () => {
-      const p = activePage();
-      dots.forEach((d, i) => {
-        d.classList.toggle('active', i === p);
-        d.setAttribute('aria-current', i === p ? 'true' : 'false');
-      });
-    };
+    const render = () => {
+      const m = metrics();
+      buildDots(m.pages);
 
-    const update = () => {
-      prev.disabled = atStart();
-      next.disabled = atEnd();
+      prev.setAttribute('aria-disabled', String(m.atStart));
+      next.setAttribute('aria-disabled', String(m.atEnd));
+
       if (track) {
-        track.classList.toggle('can-scroll-left',  !atStart());
-        track.classList.toggle('can-scroll-right', !atEnd());
+        track.classList.toggle('can-scroll-left',  !m.atStart);
+        track.classList.toggle('can-scroll-right', !m.atEnd);
       }
-      buildDots();
-      updateDots();
+
+      dots.forEach((d, i) => {
+        const on = i === m.page;
+        d.classList.toggle('active', on);
+        d.setAttribute('aria-current', on ? 'true' : 'false');
+      });
+
+      // Announce only when the page actually changes, to avoid spamming AT on scroll.
+      if (statusEl && m.page !== lastPage) {
+        statusEl.textContent = `Page ${m.page + 1} of ${m.pages}`;
+      }
+      lastPage = m.page;
     };
 
-    prev.addEventListener('click', () =>
-      rail.scrollBy({ left: -step(), behavior: prefersReduced ? 'auto' : 'smooth' })
-    );
-    next.addEventListener('click', () =>
-      rail.scrollBy({ left:  step(), behavior: prefersReduced ? 'auto' : 'smooth' })
-    );
-    rail.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('resize', () => { dots = []; update(); }, { passive: true });
+    // Coalesce scroll-driven work to at most once per frame (no layout thrashing).
+    let frame = 0;
+    const schedule = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => { frame = 0; render(); });
+    };
 
-    requestAnimationFrame(update);
+    const nudge = (dir) => {
+      const { pageSpan, maxLeft } = metrics();
+      const target = Math.max(0, Math.min(rail.scrollLeft + dir * pageSpan, maxLeft));
+      scrollToLeft(target);
+    };
+
+    prev.addEventListener('click', () => {
+      if (prev.getAttribute('aria-disabled') !== 'true') nudge(-1);
+    });
+    next.addEventListener('click', () => {
+      if (next.getAttribute('aria-disabled') !== 'true') nudge(1);
+    });
+
+    rail.addEventListener('scroll', schedule, { passive: true });
+
+    // Recompute when the rail itself resizes (catches container/layout changes that a
+    // window resize event would miss).
+    if ('ResizeObserver' in window) {
+      new ResizeObserver(() => { dots = []; schedule(); }).observe(rail);
+    } else {
+      window.addEventListener('resize', () => { dots = []; schedule(); }, { passive: true });
+    }
+
+    // Late layout shifts (lazy images, web fonts) can change scrollWidth after init.
+    window.addEventListener('load', () => { dots = []; render(); });
+
+    requestAnimationFrame(render);
   });
 })();
 </script>
