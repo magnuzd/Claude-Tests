@@ -94,29 +94,27 @@
     margin-top: 20px;
   }
 
-  /* ── Nav arrows: plain chevrons, no box ── */
+  /* ── Nav arrows: bare chevrons, no box ── */
   .collector-favorites .nav-btn {
     flex-shrink: 0;
-    padding: 4px;
-    border-radius: 6px;
-    display: grid;
-    place-items: center;
+    display: inline-flex;
+    padding: 0;
+    margin: 0;
     appearance: none;
     -webkit-appearance: none;
     background: transparent;
     border: 0;
     color: #2B7BFF;
     cursor: pointer;
-    transition:
-      color   0.18s ease,
-      opacity 0.18s ease;
+    transition: color 0.18s ease;
   }
   .collector-favorites .nav-btn:hover {
     color: #1a5fd0;
   }
   .collector-favorites .nav-btn:focus-visible {
-    outline: 3px solid #2B7BFF;
-    outline-offset: 2px;
+    outline: 2px solid #2B7BFF;
+    outline-offset: 4px;
+    border-radius: 4px;
   }
   /* Disabled = darker grey, still focusable */
   .collector-favorites .nav-btn[aria-disabled="true"],
