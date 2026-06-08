@@ -94,51 +94,38 @@
     margin-top: 20px;
   }
 
-  /* ── Nav buttons: small square, inline with dots ── */
+  /* ── Nav arrows: plain chevrons, no box ── */
   .collector-favorites .nav-btn {
-    width: 28px;
-    height: 28px;
     flex-shrink: 0;
+    padding: 4px;
     border-radius: 6px;
     display: grid;
     place-items: center;
-    background: #fff;
-    border: 1.5px solid rgba(43, 123, 255, 0.3);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    background: none;
+    border: 0;
     color: #2B7BFF;
     cursor: pointer;
     transition:
-      background    0.18s ease,
-      color         0.18s ease,
-      border-color  0.18s ease,
-      box-shadow    0.18s ease,
-      opacity       0.18s ease;
+      color   0.18s ease,
+      opacity 0.18s ease;
   }
   .collector-favorites .nav-btn:hover {
-    background: #2B7BFF;
-    color: #fff;
-    border-color: #2B7BFF;
-    box-shadow: 0 2px 8px rgba(43, 123, 255, 0.3);
+    color: #1a5fd0;
   }
   .collector-favorites .nav-btn:focus-visible {
     outline: 3px solid #2B7BFF;
     outline-offset: 2px;
   }
-  .collector-favorites .nav-btn[aria-disabled="true"] {
-    opacity: 0.25;
-    cursor: default;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-  }
-  /* Keep disabled buttons focusable but inert on hover */
+  /* Disabled = greyed out (matching the inactive dots), still focusable */
+  .collector-favorites .nav-btn[aria-disabled="true"],
   .collector-favorites .nav-btn[aria-disabled="true"]:hover {
-    background: #fff;
-    color: #2B7BFF;
-    border-color: rgba(43, 123, 255, 0.3);
+    color: #c0c8d4;
+    cursor: default;
   }
   .collector-favorites .nav-btn svg {
-    width: 14px;
-    height: 14px;
-    stroke-width: 2.5;
+    width: 24px;
+    height: 24px;
+    stroke-width: 2;
     flex-shrink: 0;
   }
 
@@ -227,13 +214,13 @@
     <!-- Merged controls: prev button | dots | next button -->
     <nav class="carousel-controls" aria-label="Carousel navigation">
       <button class="nav-btn nav-prev" type="button" aria-label="Scroll to previous items" aria-disabled="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" focusable="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
           <polyline points="15 18 9 12 15 6"/>
         </svg>
       </button>
       <div class="carousel-dots" role="group" aria-label="Choose page"></div>
       <button class="nav-btn nav-next" type="button" aria-label="Scroll to next items">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" focusable="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
           <polyline points="9 18 15 12 9 6"/>
         </svg>
       </button>
