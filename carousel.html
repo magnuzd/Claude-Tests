@@ -101,7 +101,9 @@
     border-radius: 6px;
     display: grid;
     place-items: center;
-    background: none;
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent;
     border: 0;
     color: #2B7BFF;
     cursor: pointer;
@@ -116,10 +118,10 @@
     outline: 3px solid #2B7BFF;
     outline-offset: 2px;
   }
-  /* Disabled = greyed out (matching the inactive dots), still focusable */
+  /* Disabled = darker grey, still focusable */
   .collector-favorites .nav-btn[aria-disabled="true"],
   .collector-favorites .nav-btn[aria-disabled="true"]:hover {
-    color: #c0c8d4;
+    color: #8089a0;
     cursor: default;
   }
   .collector-favorites .nav-btn svg {
