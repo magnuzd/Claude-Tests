@@ -94,11 +94,16 @@
     margin-top: 20px;
   }
 
-  /* ── Nav arrows: bare chevrons, no box ── */
+  /* ── Nav arrows: bare chevrons, no box, large tap target ── */
   .collector-favorites .nav-btn {
     flex-shrink: 0;
     display: inline-flex;
-    padding: 0;
+    align-items: center;
+    justify-content: center;
+    /* Invisible padding enlarges the tap area to ~48px without drawing a box */
+    min-width: 48px;
+    min-height: 48px;
+    padding: 12px;
     margin: 0;
     appearance: none;
     -webkit-appearance: none;
@@ -113,8 +118,8 @@
   }
   .collector-favorites .nav-btn:focus-visible {
     outline: 2px solid #2B7BFF;
-    outline-offset: 4px;
-    border-radius: 4px;
+    outline-offset: 2px;
+    border-radius: 8px;
   }
   /* Disabled = darker grey, still focusable */
   .collector-favorites .nav-btn[aria-disabled="true"],
@@ -123,9 +128,9 @@
     cursor: default;
   }
   .collector-favorites .nav-btn svg {
-    width: 24px;
-    height: 24px;
-    stroke-width: 2;
+    width: 26px;
+    height: 26px;
+    stroke-width: 2.5;
     flex-shrink: 0;
   }
 
