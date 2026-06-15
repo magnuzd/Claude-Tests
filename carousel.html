@@ -63,8 +63,9 @@
   }
   .cf-fav .cf-pagination[hidden] { display: none; }
 
-  /* Bare chevrons: real text glyph inside the button (no SVG, never empty,
-     so CMS sanitizers can't strip them) */
+  /* Chevrons: two rounded bars (thick, round end-caps) drawn from the inner
+     <span>. The span keeps a text glyph as a child so CMS sanitizers won't
+     strip the button; the glyph itself is hidden (font-size:0). */
   .cf-fav .cf-nav {
     position: static;              /* defend against stray old absolute rules */
     appearance: none;
@@ -79,13 +80,37 @@
     cursor: pointer;
     opacity: 1;
     color: var(--cf-chevron);
-    font-size: 30px;
-    font-weight: 400;
-    line-height: 1;
-    font-family: Arial, Helvetica, sans-serif;
     transition: transform 0.12s ease;
   }
-  .cf-fav .cf-nav > span { display: block; transform: translateY(-2px); }
+  .cf-fav .cf-chev {
+    position: relative;
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    font-size: 0;                 /* hide the fallback glyph, keep node non-empty */
+  }
+  .cf-fav .cf-chev::before,
+  .cf-fav .cf-chev::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 12px;
+    height: 3.5px;
+    border-radius: 999px;         /* rounded end-caps */
+    background: currentColor;
+    transition: background 0.18s ease;
+  }
+  /* NEXT  ">"  — arms meet at the right tip */
+  .cf-fav .cf-next .cf-chev::before,
+  .cf-fav .cf-next .cf-chev::after { right: 50%; transform-origin: right center; }
+  .cf-fav .cf-next .cf-chev::before { transform: translateY(-50%) rotate(-45deg); }
+  .cf-fav .cf-next .cf-chev::after  { transform: translateY(-50%) rotate(45deg); }
+  /* PREV  "<"  — arms meet at the left tip */
+  .cf-fav .cf-prev .cf-chev::before,
+  .cf-fav .cf-prev .cf-chev::after { left: 50%; transform-origin: left center; }
+  .cf-fav .cf-prev .cf-chev::before { transform: translateY(-50%) rotate(45deg); }
+  .cf-fav .cf-prev .cf-chev::after  { transform: translateY(-50%) rotate(-45deg); }
+
   @media (hover: hover) {
     .cf-fav .cf-nav:not([disabled]):hover { transform: scale(1.15); }
   }
@@ -189,9 +214,9 @@
 
     <!-- Pagination: prev chevron | page dots | next chevron -->
     <nav class="cf-pagination" aria-label="Carousel navigation">
-      <button class="cf-nav cf-prev" type="button" aria-label="Previous page"><span aria-hidden="true">&#8249;</span></button>
+      <button class="cf-nav cf-prev" type="button" aria-label="Previous page"><span class="cf-chev" aria-hidden="true">&#8249;</span></button>
       <div class="cf-dots"></div>
-      <button class="cf-nav cf-next" type="button" aria-label="Next page"><span aria-hidden="true">&#8250;</span></button>
+      <button class="cf-nav cf-next" type="button" aria-label="Next page"><span class="cf-chev" aria-hidden="true">&#8250;</span></button>
     </nav>
 
   </div>
