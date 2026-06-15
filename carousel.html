@@ -4,9 +4,9 @@
   .collector-favorites {
     --cf-brand: #2B7BFF;
     --cf-ink: #0e254d;
-    --cf-dot: #c0c8d4;
-    --cf-dot-hover: #7a8598;
-    --cf-surface: #fff;
+    --cf-chevron: #2B7BFF;       /* active chevron */
+    --cf-chevron-off: #c0c8d4;   /* disabled chevron */
+    --cf-dot: #c0c8d4;           /* inactive page */
   }
 
   /* ── Tile rail ── */
@@ -49,138 +49,91 @@
     line-height: 1.2;
   }
 
-  /* ── Track: edge-fade overlays only ── */
-  .collector-favorites .slider-track { position: relative; }
-
-  .collector-favorites .slider-track::before,
-  .collector-favorites .slider-track::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    z-index: 2;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.25s ease;
-  }
-  .collector-favorites .slider-track::before {
-    left: 0;
-    width: 80px;
-    background: linear-gradient(to right, #fff 20%, transparent);
-  }
-  .collector-favorites .slider-track::after {
-    right: 0;
-    width: 60px;
-    background: linear-gradient(to left, rgba(255, 255, 255, 0.65) 15%, transparent);
-  }
-  .collector-favorites .slider-track.can-scroll-left::before  { opacity: 1; }
-  .collector-favorites .slider-track.can-scroll-right::after  { opacity: 1; }
-
-  /* ── Bottom controls bar: prev | dots | next ── */
-  .carousel-controls {
+  /* ── Pagination bar: ‹  — • •  › ── */
+  .carousel-pagination {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    margin-top: 20px;
+    gap: 18px;
+    margin-top: 24px;
+    min-height: 44px;
   }
 
-  /* ── Nav buttons: small square, inline with dots ── */
+  /* Bare chevrons (no box), color = state */
   .collector-favorites .nav-btn {
-    width: 28px;
-    height: 28px;
-    flex-shrink: 0;
-    border-radius: 6px;
+    appearance: none;
+    background: none;
+    border: 0;
+    padding: 10px;                 /* keeps a 44px touch area around the glyph */
+    margin: 0;
     display: grid;
     place-items: center;
-    background: var(--cf-surface);
-    border: 1.5px solid rgba(43, 123, 255, 0.3);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-    color: var(--cf-brand);
+    color: var(--cf-chevron);
     cursor: pointer;
-    transition:
-      background    0.18s ease,
-      color         0.18s ease,
-      border-color  0.18s ease,
-      box-shadow    0.18s ease,
-      opacity       0.18s ease;
+    line-height: 0;
+    transition: color 0.18s ease, opacity 0.18s ease, transform 0.12s ease;
   }
-  /* Hover affordance only where a real pointer exists (skips sticky :hover on touch) */
+  .collector-favorites .nav-btn svg {
+    width: 22px;
+    height: 22px;
+    stroke-width: 2;
+  }
   @media (hover: hover) {
-    .collector-favorites .nav-btn:hover {
-      background: var(--cf-brand);
-      color: #fff;
-      border-color: var(--cf-brand);
-      box-shadow: 0 2px 8px rgba(43, 123, 255, 0.3);
-    }
+    .collector-favorites .nav-btn:not([disabled]):hover { transform: scale(1.12); }
   }
+  .collector-favorites .nav-btn:not([disabled]):active { transform: scale(0.94); }
   .collector-favorites .nav-btn:focus-visible {
     outline: 3px solid var(--cf-brand);
     outline-offset: 2px;
+    border-radius: 8px;
   }
   .collector-favorites .nav-btn[disabled] {
-    opacity: 0.25;
-    pointer-events: none;
+    color: var(--cf-chevron-off);
     cursor: default;
-  }
-  .collector-favorites .nav-btn svg {
-    width: 14px;
-    height: 14px;
-    stroke-width: 2.5;
-    flex-shrink: 0;
+    pointer-events: none;
   }
 
-  /* ── Page indicator dots ──
-     Visual dot is small, but each control has a 44px-tall invisible hit area
-     (via vertical padding + background-clip) to meet touch-target guidance. */
+  /* Page indicators */
   .carousel-dots {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
   }
   .carousel-dot {
+    appearance: none;
     height: 8px;
     width: 8px;
     min-width: 8px;
     box-sizing: content-box;
-    padding: 18px 0;            /* 8px dot + 2×18px = 44px hit height */
-    border-radius: 4px;
-    border: none;
+    padding: 18px 0;               /* invisible 44px-tall hit area */
+    border: 0;
+    border-radius: 999px;
     background: var(--cf-dot);
     background-clip: content-box;
     cursor: pointer;
-    transition:
-      background 0.2s ease,
-      width      0.25s ease,
-      transform  0.15s ease;
+    transition: background 0.2s ease, width 0.25s ease, transform 0.15s ease;
   }
   .carousel-dot.active {
-    width: 28px;
+    width: 26px;                   /* blue pill = current page */
     background: var(--cf-brand);
     background-clip: content-box;
+    cursor: default;
   }
   @media (hover: hover) {
-    .carousel-dot:hover:not(.active) {
-      background: var(--cf-dot-hover);
-      background-clip: content-box;
-      transform: scale(1.2);
-    }
+    .carousel-dot:not(.active):hover { transform: scale(1.25); }
   }
   .carousel-dot:focus-visible {
     outline: 3px solid var(--cf-brand);
     outline-offset: 3px;
   }
 
-  /* Collapse the tall hit-area padding back down on coarse pointers only if
-     it crowds the layout — keep default for consistent cross-device spacing. */
-  .carousel-controls { min-height: 44px; }
+  /* Hide the whole bar when everything fits (single page) */
+  .carousel-pagination[hidden] { display: none; }
 
   @media (prefers-reduced-motion: reduce) {
     .collector-favorites .slider-items-wrapper { scroll-behavior: auto; }
     .carousel-dot,
-    .collector-favorites .nav-btn,
-    .collector-favorites .slider-track::before,
-    .collector-favorites .slider-track::after { transition: none; }
+    .collector-favorites .nav-btn { transition: none; }
   }
 </style>
 
@@ -189,58 +142,55 @@
          aria-label="Collector Favorites">
   <div class="align-left-to-body">
 
-    <!-- Rail with edge-fade overlays -->
-    <div class="slider-track">
-      <div class="slider-items-wrapper" role="list">
+    <div class="slider-items-wrapper" role="list">
 
-        <!-- TILE 1 -->
-        <a href="/us-coins/silver-eagle" class="tile" role="listitem">
-          <img src="/media/wysiwyg/SilverEagles_HP_IsolatedCoin_01.png" alt="American Silver Eagles" loading="lazy" width="415" height="391">
-          <h6>Silver Eagles</h6>
-        </a>
+      <!-- TILE 1 -->
+      <a href="/us-coins/silver-eagle" class="tile" role="listitem">
+        <img src="/media/wysiwyg/SilverEagles_HP_IsolatedCoin_01.png" alt="American Silver Eagles" loading="lazy" width="415" height="391">
+        <h6>Silver Eagles</h6>
+      </a>
 
-        <!-- TILE 2 -->
-        <a href="/us-coins/vintage-silver/morgan-silver-dollar" class="tile" role="listitem">
-          <img src="/media/wysiwyg/Morgans_HP_IsolatedCoin_02.png" alt="Morgan Silver Dollars" loading="lazy" width="415" height="391">
-          <h6>Morgan Silver Dollars</h6>
-        </a>
+      <!-- TILE 2 -->
+      <a href="/us-coins/vintage-silver/morgan-silver-dollar" class="tile" role="listitem">
+        <img src="/media/wysiwyg/Morgans_HP_IsolatedCoin_02.png" alt="Morgan Silver Dollars" loading="lazy" width="415" height="391">
+        <h6>Morgan Silver Dollars</h6>
+      </a>
 
-        <!-- TILE 3 -->
-        <a href="/us-coins/gold-eagle" class="tile" role="listitem">
-          <img src="/media/wysiwyg/GoldEagles_HP_IsolatedCoin_03.png" alt="Gold Eagles" loading="lazy" width="415" height="391">
-          <h6>Gold Eagles</h6>
-        </a>
+      <!-- TILE 3 -->
+      <a href="/us-coins/gold-eagle" class="tile" role="listitem">
+        <img src="/media/wysiwyg/GoldEagles_HP_IsolatedCoin_03.png" alt="Gold Eagles" loading="lazy" width="415" height="391">
+        <h6>Gold Eagles</h6>
+      </a>
 
-        <!-- TILE 4 -->
-        <a href="/bullion/silver-bullion" class="tile" role="listitem">
-          <img src="/media/wysiwyg/SilverBullion_HP_IsolatedCoin_04.png" alt="Silver Bullion" loading="lazy" width="415" height="391">
-          <h6>Silver Bullion</h6>
-        </a>
+      <!-- TILE 4 -->
+      <a href="/bullion/silver-bullion" class="tile" role="listitem">
+        <img src="/media/wysiwyg/SilverBullion_HP_IsolatedCoin_04.png" alt="Silver Bullion" loading="lazy" width="415" height="391">
+        <h6>Silver Bullion</h6>
+      </a>
 
-        <!-- TILE 5 -->
-        <a href="/new-releases" class="tile" role="listitem">
-          <img src="/media/wysiwyg/NewReleases_HP_IsolatedCoin_05.png" alt="New Arrivals" loading="lazy" width="415" height="391">
-          <h6>New Releases</h6>
-        </a>
+      <!-- TILE 5 -->
+      <a href="/new-releases" class="tile" role="listitem">
+        <img src="/media/wysiwyg/NewReleases_HP_IsolatedCoin_05.png" alt="New Arrivals" loading="lazy" width="415" height="391">
+        <h6>New Releases</h6>
+      </a>
 
-        <!-- TILE 6 -->
-        <a href="/us-coins/vintage-gold" class="tile" role="listitem">
-          <img src="/media/wysiwyg/VintageGold_HP_IsolatedCoin_06.png" alt="Vintage Gold" loading="lazy" width="415" height="391">
-          <h6>U.S. Vintage Gold</h6>
-        </a>
+      <!-- TILE 6 -->
+      <a href="/us-coins/vintage-gold" class="tile" role="listitem">
+        <img src="/media/wysiwyg/VintageGold_HP_IsolatedCoin_06.png" alt="Vintage Gold" loading="lazy" width="415" height="391">
+        <h6>U.S. Vintage Gold</h6>
+      </a>
 
-      </div>
     </div>
 
-    <!-- Merged controls: prev button | dots | next button -->
-    <nav class="carousel-controls" aria-label="Carousel navigation">
-      <button class="nav-btn nav-prev" type="button" aria-label="Scroll to previous items">
+    <!-- Pagination: prev chevron | page dots | next chevron -->
+    <nav class="carousel-pagination" aria-label="Carousel navigation">
+      <button class="nav-btn nav-prev" type="button" aria-label="Previous page">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" focusable="false">
           <polyline points="15 18 9 12 15 6"/>
         </svg>
       </button>
       <div class="carousel-dots"></div>
-      <button class="nav-btn nav-next" type="button" aria-label="Scroll to next items">
+      <button class="nav-btn nav-next" type="button" aria-label="Next page">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" focusable="false">
           <polyline points="9 18 15 12 9 6"/>
         </svg>
@@ -253,63 +203,57 @@
 <script>
 (() => {
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const behavior = prefersReduced ? 'auto' : 'smooth';
 
   document.querySelectorAll('.collector-favorites').forEach(sec => {
-    const rail     = sec.querySelector('.slider-items-wrapper');
-    const track    = sec.querySelector('.slider-track');
-    const prev     = sec.querySelector('.nav-prev');
-    const next     = sec.querySelector('.nav-next');
-    const dotsEl   = sec.querySelector('.carousel-dots');
-    const controls = sec.querySelector('.carousel-controls');
-    if (!rail || !prev || !next) return;
+    const rail   = sec.querySelector('.slider-items-wrapper');
+    const prev   = sec.querySelector('.nav-prev');
+    const next   = sec.querySelector('.nav-next');
+    const dotsEl = sec.querySelector('.carousel-dots');
+    const bar    = sec.querySelector('.carousel-pagination');
+    if (!rail || !prev || !next || !dotsEl) return;
 
-    const step       = () => Math.max(rail.clientWidth * 0.9, 160);
+    // A "page" is one rail viewport-width of scrolling.
+    const pageWidth  = () => rail.clientWidth;
+    const pageCount  = () => Math.max(1, Math.ceil((rail.scrollWidth - 1) / pageWidth()));
+    const activePage = () => Math.round(rail.scrollLeft / pageWidth());
     const atStart    = () => rail.scrollLeft <= 2;
     const atEnd      = () => Math.ceil(rail.scrollLeft + rail.clientWidth) >= rail.scrollWidth - 2;
-    const pageCount  = () => Math.max(1, Math.ceil(rail.scrollWidth / rail.clientWidth));
-    const activePage = () => Math.round(rail.scrollLeft / rail.clientWidth);
 
     let dots = [];
 
     const buildDots = () => {
-      if (!dotsEl) return;
       const n = pageCount();
       if (dots.length === n) return;
       dotsEl.innerHTML = '';
       dots = Array.from({ length: n }, (_, i) => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'carousel-dot';
-        btn.setAttribute('aria-label', `Page ${i + 1} of ${n}`);
-        btn.addEventListener('click', () =>
-          rail.scrollTo({ left: i * rail.clientWidth, behavior: prefersReduced ? 'auto' : 'smooth' })
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'carousel-dot';
+        dot.setAttribute('aria-label', `Go to page ${i + 1} of ${n}`);
+        dot.addEventListener('click', () =>
+          rail.scrollTo({ left: i * pageWidth(), behavior })
         );
-        dotsEl.appendChild(btn);
-        return btn;
+        dotsEl.appendChild(dot);
+        return dot;
       });
-      if (controls) controls.style.display = n <= 1 ? 'none' : '';
+      if (bar) bar.hidden = n <= 1;   // nothing to paginate → hide the bar
     };
 
-    const updateDots = () => {
+    const updateState = () => {
       const p = activePage();
-      dots.forEach((d, i) => {
-        d.classList.toggle('active', i === p);
-        d.setAttribute('aria-current', i === p ? 'true' : 'false');
-      });
-    };
-
-    const update = () => {
       prev.disabled = atStart();
       next.disabled = atEnd();
-      if (track) {
-        track.classList.toggle('can-scroll-left',  !atStart());
-        track.classList.toggle('can-scroll-right', !atEnd());
-      }
-      buildDots();
-      updateDots();
+      dots.forEach((d, i) => {
+        const on = i === p;
+        d.classList.toggle('active', on);
+        d.setAttribute('aria-current', on ? 'true' : 'false');
+      });
     };
 
-    // Coalesce rapid scroll/resize events into one update per frame.
+    const update = () => { buildDots(); updateState(); };
+
+    // One update per frame for scroll/resize bursts.
     let ticking = false;
     const requestUpdate = () => {
       if (ticking) return;
@@ -317,12 +261,8 @@
       requestAnimationFrame(() => { ticking = false; update(); });
     };
 
-    prev.addEventListener('click', () =>
-      rail.scrollBy({ left: -step(), behavior: prefersReduced ? 'auto' : 'smooth' })
-    );
-    next.addEventListener('click', () =>
-      rail.scrollBy({ left:  step(), behavior: prefersReduced ? 'auto' : 'smooth' })
-    );
+    prev.addEventListener('click', () => rail.scrollBy({ left: -pageWidth(), behavior }));
+    next.addEventListener('click', () => rail.scrollBy({ left:  pageWidth(), behavior }));
     rail.addEventListener('scroll', requestUpdate, { passive: true });
     window.addEventListener('resize', () => { dots = []; requestUpdate(); }, { passive: true });
 
