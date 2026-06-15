@@ -21,9 +21,8 @@
 
       box-sizing: border-box;
       width: 100%;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 24px 16px 32px;
+      margin: 0;
+      padding: 24px 0 32px;          /* full-bleed: no left/right gutter */
       font-family: inherit;
       color: var(--tf-navy);
     }
@@ -252,7 +251,7 @@
       var items = Array.prototype.slice.call(track.querySelectorAll('.tf-carousel__item'));
       if (!items.length) return;
 
-      // How many items fit fully in the viewport = items per "page".
+      // How many whole items fit in the viewport = items advanced per page step.
       function perPage() {
         var itemW = items[0].getBoundingClientRect().width;
         var gap = parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap) || 0;
@@ -260,18 +259,35 @@
         return Math.max(1, per);
       }
 
+      // Reachable scroll positions, one per page. Each item-group start is clamped to the
+      // maximum scrollable offset, then collapsed groups (the trailing peek that can never
+      // become a left-aligned start) are de-duplicated. This prevents a phantom extra page
+      // with fractional --tf-per-view layouts on mobile.
+      var targets = [];
+      function computeTargets() {
+        var per = perPage();
+        var maxScroll = Math.max(0, track.scrollWidth - track.clientWidth);
+        targets = [];
+        for (var i = 0; i < items.length; i += per) {
+          var pos = Math.min(items[i].offsetLeft - track.offsetLeft, maxScroll);
+          if (!targets.length || Math.abs(targets[targets.length - 1] - pos) > 2) {
+            targets.push(pos);
+          }
+        }
+        if (!targets.length) targets.push(0);
+      }
+
       var dots = [];
       function buildDots() {
-        var per = perPage();
-        var pages = Math.max(1, Math.ceil(items.length / per));
+        computeTargets();
         dotsWrap.innerHTML = '';
         dots = [];
-        for (var i = 0; i < pages; i++) {
+        for (var i = 0; i < targets.length; i++) {
           var dot = document.createElement('button');
           dot.type = 'button';
           dot.className = 'tf-carousel__dot';
           dot.setAttribute('role', 'tab');
-          dot.setAttribute('aria-label', 'Go to slide ' + (i + 1) + ' of ' + pages);
+          dot.setAttribute('aria-label', 'Go to slide ' + (i + 1) + ' of ' + targets.length);
           (function (page) {
             dot.addEventListener('click', function () { goToPage(page); });
           })(i);
@@ -280,19 +296,21 @@
         }
       }
 
+      // Active page = the reachable target nearest the current scroll position.
       function currentPage() {
-        var per = perPage();
-        var itemW = items[0].getBoundingClientRect().width;
-        var gap = parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap) || 0;
-        var pageWidth = (itemW + gap) * per;
-        if (pageWidth <= 0) return 0;
-        return Math.round(track.scrollLeft / pageWidth);
+        var x = track.scrollLeft;
+        var best = 0;
+        var bestDist = Infinity;
+        for (var i = 0; i < targets.length; i++) {
+          var d = Math.abs(targets[i] - x);
+          if (d < bestDist) { bestDist = d; best = i; }
+        }
+        return best;
       }
 
       function goToPage(page) {
-        var per = perPage();
-        var index = Math.min(items.length - 1, page * per);
-        track.scrollTo({ left: items[index].offsetLeft - track.offsetLeft, behavior: 'smooth' });
+        var index = Math.max(0, Math.min(targets.length - 1, page));
+        track.scrollTo({ left: targets[index], behavior: 'smooth' });
       }
 
       function update() {
