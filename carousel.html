@@ -1,7 +1,10 @@
-<!-- COLLECTOR FAVORITES SLIDER -->
+<!-- ============================================================
+     COLLECTOR FAVORITES SLIDER  (self-contained, namespaced "cf-")
+     IMPORTANT: remove any OLD version of this block from the page.
+     ============================================================ -->
 <style>
   /* ── Design tokens ── */
-  .collector-favorites {
+  .cf-fav {
     --cf-brand: #2B7BFF;
     --cf-ink: #0e254d;
     --cf-chevron: #2B7BFF;       /* active chevron */
@@ -10,7 +13,7 @@
   }
 
   /* ── Tile rail ── */
-  .collector-favorites .slider-items-wrapper {
+  .cf-fav .cf-rail {
     display: flex;
     overflow-x: auto;
     gap: clamp(16px, 4vw, 40px);
@@ -22,9 +25,9 @@
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-x: contain;
   }
-  .collector-favorites .slider-items-wrapper::-webkit-scrollbar { display: none; }
+  .cf-fav .cf-rail::-webkit-scrollbar { display: none; }
 
-  .collector-favorites .tile {
+  .cf-fav .cf-tile {
     flex: 0 0 auto;
     width: clamp(220px, 28vw, 360px);
     display: flex;
@@ -33,14 +36,14 @@
     text-decoration: none;
     scroll-snap-align: start;
   }
-  .collector-favorites .tile img {
+  .cf-fav .cf-tile img {
     width: 100%;
     height: auto;
     object-fit: contain;
     display: block;
   }
-  .collector-favorites .tile h6 {
-    margin-top: 12px;
+  .cf-fav .cf-tile h6 {
+    margin: 12px 0 0;
     text-align: center;
     color: var(--cf-ink);
     font-size: clamp(16px, 2vw, 18px);
@@ -49,8 +52,8 @@
     line-height: 1.2;
   }
 
-  /* ── Pagination bar: ‹  — • •  › ── */
-  .carousel-pagination {
+  /* ── Pagination bar: ‹  ▬ •  › ── */
+  .cf-fav .cf-pagination {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -58,54 +61,54 @@
     margin-top: 24px;
     min-height: 44px;
   }
+  .cf-fav .cf-pagination[hidden] { display: none; }
 
   /* Bare chevrons drawn in pure CSS (no inner markup, can't be stripped) */
-  .collector-favorites .nav-btn {
+  .cf-fav .cf-nav {
+    position: static;              /* defend against stray old absolute rules */
     appearance: none;
     background: none;
     border: 0;
-    width: 44px;                   /* full touch target */
+    width: 44px;
     height: 44px;
     padding: 0;
     margin: 0;
     display: grid;
     place-items: center;
     cursor: pointer;
-    transition: opacity 0.18s ease, transform 0.12s ease;
+    opacity: 1;
+    transition: transform 0.12s ease;
   }
-  .collector-favorites .nav-btn::before {
+  .cf-fav .cf-nav::before {
     content: "";
     width: 12px;
     height: 12px;
     border: solid var(--cf-chevron);
-    border-width: 0 0 2.5px 2.5px;     /* ⌞ corner */
+    border-width: 0 0 2.5px 2.5px;      /* ⌞ corner */
     transition: border-color 0.18s ease;
   }
-  .collector-favorites .nav-prev::before { transform: rotate(45deg);  margin-left: 3px; }   /* ‹ */
-  .collector-favorites .nav-next::before { transform: rotate(-135deg); margin-right: 3px; }  /* › */
+  .cf-fav .cf-prev::before { transform: rotate(45deg);   margin-left: 3px; }   /* ‹ */
+  .cf-fav .cf-next::before { transform: rotate(-135deg); margin-right: 3px; }  /* › */
 
   @media (hover: hover) {
-    .collector-favorites .nav-btn:not([disabled]):hover { transform: scale(1.12); }
+    .cf-fav .cf-nav:not([disabled]):hover { transform: scale(1.12); }
   }
-  .collector-favorites .nav-btn:not([disabled]):active { transform: scale(0.94); }
-  .collector-favorites .nav-btn:focus-visible {
+  .cf-fav .cf-nav:not([disabled]):active { transform: scale(0.94); }
+  .cf-fav .cf-nav:focus-visible {
     outline: 3px solid var(--cf-brand);
     outline-offset: 2px;
     border-radius: 8px;
   }
-  .collector-favorites .nav-btn[disabled] {
-    cursor: default;
-    pointer-events: none;
-  }
-  .collector-favorites .nav-btn[disabled]::before { border-color: var(--cf-chevron-off); }
+  .cf-fav .cf-nav[disabled] { cursor: default; pointer-events: none; }
+  .cf-fav .cf-nav[disabled]::before { border-color: var(--cf-chevron-off); }
 
-  /* Page indicators */
-  .carousel-dots {
+  /* ── Page indicators ── */
+  .cf-fav .cf-dots {
     display: flex;
     align-items: center;
     gap: 8px;
   }
-  .carousel-dot {
+  .cf-fav .cf-dot {
     appearance: none;
     height: 8px;
     width: 8px;
@@ -119,69 +122,66 @@
     cursor: pointer;
     transition: background 0.2s ease, width 0.25s ease, transform 0.15s ease;
   }
-  .carousel-dot.active {
+  .cf-fav .cf-dot.is-active {
     width: 26px;                   /* blue pill = current page */
     background: var(--cf-brand);
     background-clip: content-box;
     cursor: default;
   }
   @media (hover: hover) {
-    .carousel-dot:not(.active):hover { transform: scale(1.25); }
+    .cf-fav .cf-dot:not(.is-active):hover { transform: scale(1.25); }
   }
-  .carousel-dot:focus-visible {
+  .cf-fav .cf-dot:focus-visible {
     outline: 3px solid var(--cf-brand);
     outline-offset: 3px;
   }
 
-  /* Hide the whole bar when everything fits (single page) */
-  .carousel-pagination[hidden] { display: none; }
-
   @media (prefers-reduced-motion: reduce) {
-    .collector-favorites .slider-items-wrapper { scroll-behavior: auto; }
-    .carousel-dot,
-    .collector-favorites .nav-btn { transition: none; }
+    .cf-fav .cf-rail { scroll-behavior: auto; }
+    .cf-fav .cf-dot,
+    .cf-fav .cf-nav { transition: none; }
   }
 </style>
 
-<section class="collector-favorites fullbleed-left"
+<section class="cf-fav fullbleed-left"
          aria-roledescription="carousel"
          aria-label="Collector Favorites">
   <div class="align-left-to-body">
 
-    <div class="slider-items-wrapper" role="list">
+    <div class="cf-rail" role="list">
 
       <!-- TILE 1 -->
-      <a href="/us-coins/silver-eagle" class="tile" role="listitem">
+      <a href="/us-coins/silver-eagle" class="cf-tile" role="listitem">
         <img src="/media/wysiwyg/SilverEagles_HP_IsolatedCoin_01.png" alt="American Silver Eagles" loading="lazy" width="415" height="391">
         <h6>Silver Eagles</h6>
       </a>
 
       <!-- TILE 2 -->
-      <a href="/us-coins/vintage-silver/morgan-silver-dollar" class="tile" role="listitem">
+      <a href="/us-coins/vintage-silver/morgan-silver-dollar" class="cf-tile" role="listitem">
         <img src="/media/wysiwyg/Morgans_HP_IsolatedCoin_02.png" alt="Morgan Silver Dollars" loading="lazy" width="415" height="391">
         <h6>Morgan Silver Dollars</h6>
       </a>
 
       <!-- TILE 3 -->
-      <a href="/us-coins/gold-eagle" class="tile" role="listitem">
+      <a href="/us-coins/gold-eagle" class="cf-tile" role="listitem">
         <img src="/media/wysiwyg/GoldEagles_HP_IsolatedCoin_03.png" alt="Gold Eagles" loading="lazy" width="415" height="391">
         <h6>Gold Eagles</h6>
       </a>
 
       <!-- TILE 4 -->
-      <a href="/bullion/silver-bullion" class="tile" role="listitem">
+      <a href="/bullion/silver-bullion" class="cf-tile" role="listitem">
         <img src="/media/wysiwyg/SilverBullion_HP_IsolatedCoin_04.png" alt="Silver Bullion" loading="lazy" width="415" height="391">
         <h6>Silver Bullion</h6>
       </a>
 
       <!-- TILE 5 -->
-      <a href="/new-releases" class="tile" role="listitem">
+      <a href="/new-releases" class="cf-tile" role="listitem">
         <img src="/media/wysiwyg/NewReleases_HP_IsolatedCoin_05.png" alt="New Arrivals" loading="lazy" width="415" height="391">
         <h6>New Releases</h6>
       </a>
 
       <!-- TILE 6 -->
-      <a href="/us-coins/vintage-gold" class="tile" role="listitem">
+      <a href="/us-coins/vintage-gold" class="cf-tile" role="listitem">
         <img src="/media/wysiwyg/VintageGold_HP_IsolatedCoin_06.png" alt="Vintage Gold" loading="lazy" width="415" height="391">
         <h6>U.S. Vintage Gold</h6>
       </a>
@@ -189,10 +189,10 @@
     </div>
 
     <!-- Pagination: prev chevron | page dots | next chevron -->
-    <nav class="carousel-pagination" aria-label="Carousel navigation">
-      <button class="nav-btn nav-prev" type="button" aria-label="Previous page"></button>
-      <div class="carousel-dots"></div>
-      <button class="nav-btn nav-next" type="button" aria-label="Next page"></button>
+    <nav class="cf-pagination" aria-label="Carousel navigation">
+      <button class="cf-nav cf-prev" type="button" aria-label="Previous page"></button>
+      <div class="cf-dots"></div>
+      <button class="cf-nav cf-next" type="button" aria-label="Next page"></button>
     </nav>
 
   </div>
@@ -203,12 +203,12 @@
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const behavior = prefersReduced ? 'auto' : 'smooth';
 
-  document.querySelectorAll('.collector-favorites').forEach(sec => {
-    const rail   = sec.querySelector('.slider-items-wrapper');
-    const prev   = sec.querySelector('.nav-prev');
-    const next   = sec.querySelector('.nav-next');
-    const dotsEl = sec.querySelector('.carousel-dots');
-    const bar    = sec.querySelector('.carousel-pagination');
+  document.querySelectorAll('.cf-fav').forEach(sec => {
+    const rail   = sec.querySelector('.cf-rail');
+    const prev   = sec.querySelector('.cf-prev');
+    const next   = sec.querySelector('.cf-next');
+    const dotsEl = sec.querySelector('.cf-dots');
+    const bar    = sec.querySelector('.cf-pagination');
     if (!rail || !prev || !next || !dotsEl) return;
 
     // A "page" is one rail viewport-width of scrolling.
@@ -227,7 +227,7 @@
       dots = Array.from({ length: n }, (_, i) => {
         const dot = document.createElement('button');
         dot.type = 'button';
-        dot.className = 'carousel-dot';
+        dot.className = 'cf-dot';
         dot.setAttribute('aria-label', `Go to page ${i + 1} of ${n}`);
         dot.addEventListener('click', () =>
           rail.scrollTo({ left: i * pageWidth(), behavior })
@@ -244,7 +244,7 @@
       next.disabled = atEnd();
       dots.forEach((d, i) => {
         const on = i === p;
-        d.classList.toggle('active', on);
+        d.classList.toggle('is-active', on);
         d.setAttribute('aria-current', on ? 'true' : 'false');
       });
     };
