@@ -63,7 +63,8 @@
   }
   .cf-fav .cf-pagination[hidden] { display: none; }
 
-  /* Bare chevrons drawn in pure CSS (no inner markup, can't be stripped) */
+  /* Bare chevrons: real text glyph inside the button (no SVG, never empty,
+     so CMS sanitizers can't strip them) */
   .cf-fav .cf-nav {
     position: static;              /* defend against stray old absolute rules */
     appearance: none;
@@ -77,30 +78,28 @@
     place-items: center;
     cursor: pointer;
     opacity: 1;
+    color: var(--cf-chevron);
+    font-size: 30px;
+    font-weight: 400;
+    line-height: 1;
+    font-family: Arial, Helvetica, sans-serif;
     transition: transform 0.12s ease;
   }
-  .cf-fav .cf-nav::before {
-    content: "";
-    width: 12px;
-    height: 12px;
-    border: solid var(--cf-chevron);
-    border-width: 0 0 2.5px 2.5px;      /* ⌞ corner */
-    transition: border-color 0.18s ease;
-  }
-  .cf-fav .cf-prev::before { transform: rotate(45deg);   margin-left: 3px; }   /* ‹ */
-  .cf-fav .cf-next::before { transform: rotate(-135deg); margin-right: 3px; }  /* › */
-
+  .cf-fav .cf-nav > span { display: block; transform: translateY(-2px); }
   @media (hover: hover) {
-    .cf-fav .cf-nav:not([disabled]):hover { transform: scale(1.12); }
+    .cf-fav .cf-nav:not([disabled]):hover { transform: scale(1.15); }
   }
-  .cf-fav .cf-nav:not([disabled]):active { transform: scale(0.94); }
+  .cf-fav .cf-nav:not([disabled]):active { transform: scale(0.92); }
   .cf-fav .cf-nav:focus-visible {
     outline: 3px solid var(--cf-brand);
     outline-offset: 2px;
     border-radius: 8px;
   }
-  .cf-fav .cf-nav[disabled] { cursor: default; pointer-events: none; }
-  .cf-fav .cf-nav[disabled]::before { border-color: var(--cf-chevron-off); }
+  .cf-fav .cf-nav[disabled] {
+    color: var(--cf-chevron-off);
+    cursor: default;
+    pointer-events: none;
+  }
 
   /* ── Page indicators ── */
   .cf-fav .cf-dots {
@@ -190,9 +189,9 @@
 
     <!-- Pagination: prev chevron | page dots | next chevron -->
     <nav class="cf-pagination" aria-label="Carousel navigation">
-      <button class="cf-nav cf-prev" type="button" aria-label="Previous page"></button>
+      <button class="cf-nav cf-prev" type="button" aria-label="Previous page"><span aria-hidden="true">&#8249;</span></button>
       <div class="cf-dots"></div>
-      <button class="cf-nav cf-next" type="button" aria-label="Next page"></button>
+      <button class="cf-nav cf-next" type="button" aria-label="Next page"><span aria-hidden="true">&#8250;</span></button>
     </nav>
 
   </div>
@@ -202,6 +201,11 @@
 (() => {
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const behavior = prefersReduced ? 'auto' : 'smooth';
+
+  // Self-cleanup: remove any OLD version of this slider still on the page
+  // (previous pastes used the ".collector-favorites" class). This kills the
+  // stray edge chevron those versions render.
+  document.querySelectorAll('.collector-favorites').forEach(el => el.remove());
 
   document.querySelectorAll('.cf-fav').forEach(sec => {
     const rail   = sec.querySelector('.cf-rail');
