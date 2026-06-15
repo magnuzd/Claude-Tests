@@ -59,25 +59,31 @@
     min-height: 44px;
   }
 
-  /* Bare chevrons (no box), color = state */
+  /* Bare chevrons drawn in pure CSS (no inner markup, can't be stripped) */
   .collector-favorites .nav-btn {
     appearance: none;
     background: none;
     border: 0;
-    padding: 10px;                 /* keeps a 44px touch area around the glyph */
+    width: 44px;                   /* full touch target */
+    height: 44px;
+    padding: 0;
     margin: 0;
     display: grid;
     place-items: center;
-    color: var(--cf-chevron);
     cursor: pointer;
-    line-height: 0;
-    transition: color 0.18s ease, opacity 0.18s ease, transform 0.12s ease;
+    transition: opacity 0.18s ease, transform 0.12s ease;
   }
-  .collector-favorites .nav-btn svg {
-    width: 22px;
-    height: 22px;
-    stroke-width: 2;
+  .collector-favorites .nav-btn::before {
+    content: "";
+    width: 12px;
+    height: 12px;
+    border: solid var(--cf-chevron);
+    border-width: 0 0 2.5px 2.5px;     /* ⌞ corner */
+    transition: border-color 0.18s ease;
   }
+  .collector-favorites .nav-prev::before { transform: rotate(45deg);  margin-left: 3px; }   /* ‹ */
+  .collector-favorites .nav-next::before { transform: rotate(-135deg); margin-right: 3px; }  /* › */
+
   @media (hover: hover) {
     .collector-favorites .nav-btn:not([disabled]):hover { transform: scale(1.12); }
   }
@@ -88,10 +94,10 @@
     border-radius: 8px;
   }
   .collector-favorites .nav-btn[disabled] {
-    color: var(--cf-chevron-off);
     cursor: default;
     pointer-events: none;
   }
+  .collector-favorites .nav-btn[disabled]::before { border-color: var(--cf-chevron-off); }
 
   /* Page indicators */
   .carousel-dots {
@@ -184,17 +190,9 @@
 
     <!-- Pagination: prev chevron | page dots | next chevron -->
     <nav class="carousel-pagination" aria-label="Carousel navigation">
-      <button class="nav-btn nav-prev" type="button" aria-label="Previous page">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" focusable="false">
-          <polyline points="15 18 9 12 15 6"/>
-        </svg>
-      </button>
+      <button class="nav-btn nav-prev" type="button" aria-label="Previous page"></button>
       <div class="carousel-dots"></div>
-      <button class="nav-btn nav-next" type="button" aria-label="Next page">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true" focusable="false">
-          <polyline points="9 18 15 12 9 6"/>
-        </svg>
-      </button>
+      <button class="nav-btn nav-next" type="button" aria-label="Next page"></button>
     </nav>
 
   </div>
