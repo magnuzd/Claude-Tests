@@ -85,8 +85,8 @@
   .cf-fav .cf-chev {
     position: relative;
     display: inline-block;
-    width: 22px;
-    height: 22px;
+    width: 18px;
+    height: 18px;
     font-size: 0;                 /* hide the fallback glyph, keep node non-empty */
   }
   .cf-fav .cf-chev::before,
@@ -94,22 +94,23 @@
     content: "";
     position: absolute;
     top: 50%;
-    width: 12px;
-    height: 3.5px;
+    width: 11px;
+    height: 3.6px;
+    margin-top: -1.8px;           /* vertical-center the bar (no translate) */
     border-radius: 999px;         /* rounded end-caps */
     background: currentColor;
     transition: background 0.18s ease;
   }
-  /* NEXT  ">"  — arms meet at the right tip */
+  /* NEXT  ">"  — both bars pivot on their shared right tip */
   .cf-fav .cf-next .cf-chev::before,
   .cf-fav .cf-next .cf-chev::after { right: 50%; transform-origin: right center; }
-  .cf-fav .cf-next .cf-chev::before { transform: translateY(-50%) rotate(-45deg); }
-  .cf-fav .cf-next .cf-chev::after  { transform: translateY(-50%) rotate(45deg); }
-  /* PREV  "<"  — arms meet at the left tip */
+  .cf-fav .cf-next .cf-chev::before { transform: rotate(-45deg); }
+  .cf-fav .cf-next .cf-chev::after  { transform: rotate(45deg); }
+  /* PREV  "<"  — both bars pivot on their shared left tip */
   .cf-fav .cf-prev .cf-chev::before,
   .cf-fav .cf-prev .cf-chev::after { left: 50%; transform-origin: left center; }
-  .cf-fav .cf-prev .cf-chev::before { transform: translateY(-50%) rotate(45deg); }
-  .cf-fav .cf-prev .cf-chev::after  { transform: translateY(-50%) rotate(-45deg); }
+  .cf-fav .cf-prev .cf-chev::before { transform: rotate(45deg); }
+  .cf-fav .cf-prev .cf-chev::after  { transform: rotate(-45deg); }
 
   @media (hover: hover) {
     .cf-fav .cf-nav:not([disabled]):hover { transform: scale(1.15); }
@@ -133,23 +134,28 @@
     gap: 8px;
   }
   .cf-fav .cf-dot {
+    position: relative;
     appearance: none;
     height: 8px;
     width: 8px;
     min-width: 8px;
-    box-sizing: content-box;
-    padding: 18px 0;               /* invisible 44px-tall hit area */
+    padding: 0;
+    margin: 0;
     border: 0;
-    border-radius: 999px;
+    border-radius: 999px;          /* fully rounded dot / pill */
     background: var(--cf-dot);
-    background-clip: content-box;
     cursor: pointer;
     transition: background 0.2s ease, width 0.25s ease, transform 0.15s ease;
+  }
+  /* Invisible 44px-tall tap target without affecting the painted shape */
+  .cf-fav .cf-dot::after {
+    content: "";
+    position: absolute;
+    inset: -18px -4px;
   }
   .cf-fav .cf-dot.is-active {
     width: 26px;                   /* blue pill = current page */
     background: var(--cf-brand);
-    background-clip: content-box;
     cursor: default;
   }
   @media (hover: hover) {
