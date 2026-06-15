@@ -82,35 +82,23 @@
     color: var(--cf-chevron);
     transition: transform 0.12s ease;
   }
+  /* Chevron drawn as ONE continuous bordered corner (right + bottom borders).
+     A single path means no separate bar-ends to overlap at the tip, so the
+     joint stays smooth; the outer corners are rounded for soft caps. */
   .cf-fav .cf-chev {
-    position: relative;
     display: inline-block;
-    width: 18px;
-    height: 18px;
-    font-size: 0;                 /* hide the fallback glyph, keep node non-empty */
+    box-sizing: border-box;
+    width: 13px;
+    height: 13px;
+    font-size: 0;                  /* hide the fallback glyph, keep node non-empty */
+    border: solid currentColor;
+    border-width: 0 3.4px 3.4px 0;
+    border-radius: 0 2.5px 3px 2.5px;   /* TL TR BR(joint) BL */
+    transition: border-color 0.18s ease;
   }
-  .cf-fav .cf-chev::before,
-  .cf-fav .cf-chev::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    width: 11px;
-    height: 3.6px;
-    margin-top: -1.8px;           /* vertical-center the bar (no translate) */
-    border-radius: 999px;         /* rounded end-caps */
-    background: currentColor;
-    transition: background 0.18s ease;
-  }
-  /* NEXT  ">"  — both bars pivot on their shared right tip */
-  .cf-fav .cf-next .cf-chev::before,
-  .cf-fav .cf-next .cf-chev::after { right: 50%; transform-origin: right center; }
-  .cf-fav .cf-next .cf-chev::before { transform: rotate(-45deg); }
-  .cf-fav .cf-next .cf-chev::after  { transform: rotate(45deg); }
-  /* PREV  "<"  — both bars pivot on their shared left tip */
-  .cf-fav .cf-prev .cf-chev::before,
-  .cf-fav .cf-prev .cf-chev::after { left: 50%; transform-origin: left center; }
-  .cf-fav .cf-prev .cf-chev::before { transform: rotate(45deg); }
-  .cf-fav .cf-prev .cf-chev::after  { transform: rotate(-45deg); }
+  /* translateX recentres the L-corner after rotation; rotate forms the arrow */
+  .cf-fav .cf-next .cf-chev { transform: translateX(-2.9px) rotate(-45deg); }
+  .cf-fav .cf-prev .cf-chev { transform: translateX(2.9px)  rotate(135deg); }
 
   @media (hover: hover) {
     .cf-fav .cf-nav:not([disabled]):hover { transform: scale(1.15); }
