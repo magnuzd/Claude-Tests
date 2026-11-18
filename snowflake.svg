@@ -1,4 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="50" height="43.4" viewBox="0 0 76 66" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+<svg xmlns="http://www.w3.org/2000/svg" width="50" height="43.4" viewBox="0 0 76 66"
+     role="img" aria-labelledby="snowflake-title" focusable="false"
+     fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <title id="snowflake-title">Snowflake</title>
   <!-- vertical axis with end chevrons and inner Vs -->
   <path d="M37.5 1V65"/>
   <path d="M33 5.5 37.5 9.5 42 5.5M33 60.5 37.5 56.5 42 60.5"/>
